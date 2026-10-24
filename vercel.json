@@ -1,0 +1,452 @@
+{
+  "redirects": [
+    {
+      "source": "/satellica-ai-company-brand-identity-design",
+      "destination": "/#satellica",
+      "permanent": true
+    },
+    {
+      "source": "/satellica-ai-company-brand-identity-design/",
+      "destination": "/#satellica",
+      "permanent": true
+    },
+    {
+      "source": "/2026/04/03/our-story-branding",
+      "destination": "/#our-story",
+      "permanent": true
+    },
+    {
+      "source": "/2026/04/03/our-story-branding/",
+      "destination": "/#our-story",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/#blanc",
+      "permanent": true,
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id",
+          "value": "1350"
+        }
+      ]
+    },
+    {
+      "source": "/branding-development-for-blanc",
+      "destination": "/#blanc",
+      "permanent": true
+    },
+    {
+      "source": "/branding-development-for-blanc/",
+      "destination": "/#blanc",
+      "permanent": true
+    },
+    {
+      "source": "/branding-for-driving-school",
+      "destination": "/#driving-school",
+      "permanent": true
+    },
+    {
+      "source": "/branding-for-driving-school/",
+      "destination": "/#driving-school",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/#oxtail-restaurant",
+      "permanent": true,
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id",
+          "value": "587"
+        }
+      ]
+    },
+    {
+      "source": "/oxtail-restaurant-logo-re-design",
+      "destination": "/#oxtail-restaurant",
+      "permanent": true
+    },
+    {
+      "source": "/oxtail-restaurant-logo-re-design/",
+      "destination": "/#oxtail-restaurant",
+      "permanent": true
+    },
+    {
+      "source": "/eb-electronics-logo-design",
+      "destination": "/#eb-electronics",
+      "permanent": true
+    },
+    {
+      "source": "/eb-electronics-logo-design/",
+      "destination": "/#eb-electronics",
+      "permanent": true
+    },
+    {
+      "source": "/calla-blanche-website-design-phase-2",
+      "destination": "/#calla-blanche",
+      "permanent": true
+    },
+    {
+      "source": "/calla-blanche-website-design-phase-2/",
+      "destination": "/#calla-blanche",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/#b-plus",
+      "permanent": true,
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id",
+          "value": "971"
+        }
+      ]
+    },
+    {
+      "source": "/b-website-design",
+      "destination": "/#b-plus",
+      "permanent": true
+    },
+    {
+      "source": "/b-website-design/",
+      "destination": "/#b-plus",
+      "permanent": true
+    },
+    {
+      "source": "/canaan-site-furnishings-website-redesign",
+      "destination": "/#canaan-site-furnishings",
+      "permanent": true
+    },
+    {
+      "source": "/canaan-site-furnishings-website-redesign/",
+      "destination": "/#canaan-site-furnishings",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/#icon-best",
+      "permanent": true,
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id",
+          "value": "312"
+        }
+      ]
+    },
+    {
+      "source": "/icon-best-e-commerce-website-design",
+      "destination": "/#icon-best",
+      "permanent": true
+    },
+    {
+      "source": "/icon-best-e-commerce-website-design/",
+      "destination": "/#icon-best",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/#dog-food-app",
+      "permanent": true,
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id",
+          "value": "253"
+        }
+      ]
+    },
+    {
+      "source": "/organic-dogs-food-app",
+      "destination": "/#dog-food-app",
+      "permanent": true
+    },
+    {
+      "source": "/organic-dogs-food-app/",
+      "destination": "/#dog-food-app",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/#motion-graphic",
+      "permanent": true,
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id",
+          "value": "1387"
+        }
+      ]
+    },
+    {
+      "source": "/b-logo-motion",
+      "destination": "/#motion-graphic",
+      "permanent": true
+    },
+    {
+      "source": "/b-logo-motion/",
+      "destination": "/#motion-graphic",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/#illustration-poster",
+      "permanent": true,
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id",
+          "value": "1493"
+        }
+      ]
+    },
+    {
+      "source": "/illustration-poster-design",
+      "destination": "/#illustration-poster",
+      "permanent": true
+    },
+    {
+      "source": "/illustration-poster-design/",
+      "destination": "/#illustration-poster",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/#social-media-marketing",
+      "permanent": true,
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id",
+          "value": "571"
+        }
+      ]
+    },
+    {
+      "source": "/social-media-marketing",
+      "destination": "/#social-media-marketing",
+      "permanent": true
+    },
+    {
+      "source": "/social-media-marketing/",
+      "destination": "/#social-media-marketing",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/#print-material",
+      "permanent": true,
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id",
+          "value": "621"
+        }
+      ]
+    },
+    {
+      "source": "/print-material-design",
+      "destination": "/#print-material",
+      "permanent": true
+    },
+    {
+      "source": "/print-material-design/",
+      "destination": "/#print-material",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/#lighting",
+      "permanent": true,
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id",
+          "value": "733"
+        }
+      ]
+    },
+    {
+      "source": "/wall-lights-advetisements",
+      "destination": "/#lighting",
+      "permanent": true
+    },
+    {
+      "source": "/wall-lights-advetisements/",
+      "destination": "/#lighting",
+      "permanent": true
+    },
+    {
+      "source": "/dining-chair-advertising-and-graphic",
+      "destination": "/#dining-chair",
+      "permanent": true
+    },
+    {
+      "source": "/dining-chair-advertising-and-graphic/",
+      "destination": "/#dining-chair",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/#wireless-speaker",
+      "permanent": true,
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id",
+          "value": "291"
+        }
+      ]
+    },
+    {
+      "source": "/wireless-speaker-advertising-2",
+      "destination": "/#wireless-speaker",
+      "permanent": true
+    },
+    {
+      "source": "/wireless-speaker-advertising-2/",
+      "destination": "/#wireless-speaker",
+      "permanent": true
+    },
+    {
+      "source": "/blender-advertising",
+      "destination": "/#blender",
+      "permanent": true
+    },
+    {
+      "source": "/blender-advertising/",
+      "destination": "/#blender",
+      "permanent": true
+    },
+    {
+      "source": "/graphic-and-advertising-for-customized-makeup-organizer",
+      "destination": "/#makeup-organizer",
+      "permanent": true
+    },
+    {
+      "source": "/graphic-and-advertising-for-customized-makeup-organizer/",
+      "destination": "/#makeup-organizer",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/#trekking-pole",
+      "permanent": true,
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id",
+          "value": "238"
+        }
+      ]
+    },
+    {
+      "source": "/trekking-pole-advertising",
+      "destination": "/#trekking-pole",
+      "permanent": true
+    },
+    {
+      "source": "/trekking-pole-advertising/",
+      "destination": "/#trekking-pole",
+      "permanent": true
+    },
+    {
+      "source": "/project-2",
+      "destination": "/#air-mattress",
+      "permanent": true
+    },
+    {
+      "source": "/project-2/",
+      "destination": "/#air-mattress",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/#humidifier",
+      "permanent": true,
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id",
+          "value": "197"
+        }
+      ]
+    },
+    {
+      "source": "/graphic-design-and-advertising-for-icon-best-humidifier",
+      "destination": "/#humidifier",
+      "permanent": true
+    },
+    {
+      "source": "/graphic-design-and-advertising-for-icon-best-humidifier/",
+      "destination": "/#humidifier",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/#uros-backpack",
+      "permanent": true,
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id",
+          "value": "223"
+        }
+      ]
+    },
+    {
+      "source": "/graphic-design-and-advertising-for-uros-backpack",
+      "destination": "/#uros-backpack",
+      "permanent": true
+    },
+    {
+      "source": "/graphic-design-and-advertising-for-uros-backpack/",
+      "destination": "/#uros-backpack",
+      "permanent": true
+    },
+    {
+      "source": "/about",
+      "destination": "/#about",
+      "permanent": true
+    },
+    {
+      "source": "/about/",
+      "destination": "/#about",
+      "permanent": true
+    },
+    {
+      "source": "/contact",
+      "destination": "/#contact",
+      "permanent": true
+    },
+    {
+      "source": "/contact/",
+      "destination": "/#contact",
+      "permanent": true
+    },
+    {
+      "source": "/download-my-resume",
+      "destination": "/jun-zhao-resume.pdf",
+      "permanent": true
+    },
+    {
+      "source": "/download-my-resume/",
+      "destination": "/jun-zhao-resume.pdf",
+      "permanent": true
+    },
+    {
+      "source": "/wp-content/uploads/2023/06/jun-zhao-resume.pdf",
+      "destination": "/jun-zhao-resume.pdf",
+      "permanent": true
+    },
+    {
+      "source": "/wp-content/uploads/2023/06/jun-zhao-resume.pdf/",
+      "destination": "/jun-zhao-resume.pdf",
+      "permanent": true
+    }
+  ]
+}
