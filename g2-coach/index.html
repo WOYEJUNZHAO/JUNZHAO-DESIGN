@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>G2 Coach Case Study</title>
+<meta name="description" content="G2 Coach: a mobile app where new drivers practise Ontario's G2 road-test maneuvers by driving them. UI/UX case study by Jun Zhao.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: one centred column (max 1120px) on graph paper. Sections stack: hero with three phones, problem, process timeline (alternating text/image rows), final screens grid, system, reflection.
+   Deliberately a single light "pencil on paper" look, matching the app. */
+:root{
+  --paper:#ffffff; --grid:#eef0f3; --ink:#1b1b1b; --pencil:#6f6f6f; --line:#d9d9d9; --hatch:#e2e2e2;
+  --orange:#f2851a; --blue:#2c85d8; --orange-soft:#fde3c8; --blue-soft:#d3e6f7;
+  --crayon-o:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='c'%20x='0'%20y='0'%20width='100%'%20height='100%'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.85%200.07'%20numOctaves='3'%20seed='3'/%3E%3CfeColorMatrix%20values='0%200%200%200%200.95%200%200%200%200%200.52%200%200%200%200%200.1%200%200%200%20-2.6%202.05'/%3E%3C/filter%3E%3Cg%20transform='rotate(-24%2080%2080)'%3E%3Crect%20x='-60'%20y='-60'%20width='280'%20height='280'%20filter='url(%23c)'/%3E%3C/g%3E%3C/svg%3E") 0 0/160px 160px;
+  --crayon-b:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='c'%20x='0'%20y='0'%20width='100%'%20height='100%'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.85%200.07'%20numOctaves='3'%20seed='9'/%3E%3CfeColorMatrix%20values='0%200%200%200%200.17%200%200%200%200%200.52%200%200%200%200%200.85%200%200%200%20-2.6%202.05'/%3E%3C/filter%3E%3Cg%20transform='rotate(-24%2080%2080)'%3E%3Crect%20x='-60'%20y='-60'%20width='280'%20height='280'%20filter='url(%23c)'/%3E%3C/g%3E%3C/svg%3E") 0 0/160px 160px;
+  --f-hand:"Gaegu","Comic Sans MS","Chalkboard SE",cursive;
+  --f-body:"Nunito","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --r1:18px 14px 20px 15px/15px 20px 14px 18px;
+  --r2:14px 20px 15px 18px/18px 15px 20px 14px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--ink)}
+h1,h2,h3,h4{font-family:var(--f-hand);font-weight:700;margin:0;line-height:1;text-wrap:balance}
+p{margin:0}
+:focus-visible{outline:2.5px dashed var(--ink);outline-offset:4px}
+
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.sk{border:2.5px solid var(--ink);border-radius:var(--r1);background:var(--paper)}
+.shadow{box-shadow:5px 5px 0 var(--ink)}
+.crayon-o{background:var(--crayon-o)}
+.crayon-b{background:var(--crayon-b)}
+.mark{background:var(--crayon-o);padding:0 .18em;border-radius:6px 10px 5px 12px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.eyebrow{font-family:var(--f-hand);font-size:22px;color:var(--pencil);display:flex;align-items:center;gap:10px}
+.eyebrow b{font-weight:700;color:var(--ink);background:var(--paper);border:2px solid var(--ink);border-radius:var(--r2);padding:0 10px;font-size:20px}
+
+/* nav */
+.nav{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-block:22px}
+.logo{font-family:var(--f-hand);font-size:30px;font-weight:700;text-decoration:none}
+.nav ul{list-style:none;display:flex;gap:6px;margin:0;padding:0;flex-wrap:wrap}
+.nav ul a{display:block;text-decoration:none;font-weight:700;font-size:15px;padding:6px 14px;border:2px solid transparent;border-radius:var(--r2)}
+.nav ul a[aria-current="page"]{border-color:var(--ink);background:var(--paper)}
+.nav ul a:hover{border-color:var(--line)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:48px;align-items:center;padding-block:40px 72px}
+.hero h1{font-size:clamp(76px,11vw,140px);letter-spacing:-.01em;line-height:.85;margin:18px 0 22px}
+.lede{font-size:clamp(19px,2vw,22px);line-height:1.45;max-width:30ch}
+.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:32px;max-width:460px}
+.meta div{padding:10px 14px}
+.meta span{display:block;font-size:13px;font-weight:700;color:var(--pencil);text-transform:uppercase;letter-spacing:.06em}
+.meta strong{font-size:16px}
+.cta{display:inline-flex;align-items:center;gap:14px;margin-top:28px;padding:10px 12px 10px 24px;text-decoration:none;font-family:var(--f-hand);font-size:28px;font-weight:700;border:2.5px solid var(--ink);border-radius:var(--r2);background:var(--crayon-o);box-shadow:5px 5px 0 var(--ink);transition:transform .12s,box-shadow .12s}
+.cta:hover{transform:translate(2px,2px);box-shadow:3px 3px 0 var(--ink)}
+.cta svg{width:40px;height:40px}
+.phones{position:relative;display:flex;justify-content:center;align-items:flex-start;gap:0;min-height:560px}
+.phone{width:clamp(150px,17vw,230px);border:3px solid var(--ink);border-radius:36px;padding:7px;background:var(--paper);box-shadow:6px 6px 0 var(--ink);flex:none}
+.phone img{border-radius:28px;border:1.5px solid var(--line);aspect-ratio:390/844;width:100%;object-fit:cover}
+.phones .phone:nth-child(1){transform:translate(28px,64px) rotate(-5deg)}
+.phones .phone:nth-child(2){position:relative;z-index:2}
+.phones .phone:nth-child(3){transform:translate(-28px,84px) rotate(5deg)}
+.doodle-note{position:absolute;font-family:var(--f-hand);font-size:22px;line-height:1;color:var(--ink)}
+.doodle-note svg{width:60px;height:40px}
+
+/* sections */
+section{padding-block:72px}
+.sec-head{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:24px 56px;margin-bottom:40px;align-items:start}
+.sec-num{font-family:var(--f-hand);font-size:26px;color:var(--pencil)}
+.sec-head h2{font-size:clamp(46px,6vw,72px)}
+.sec-head p{font-size:19px;max-width:60ch;margin-top:14px}
+.sec-head .big-quote{margin-top:0;font-family:var(--f-hand);font-size:clamp(32px,4vw,48px);line-height:1.05;font-weight:700;max-width:24ch}
+.prob{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:40px}
+.prob li{list-style:none;padding:20px 22px}
+.prob h3{font-size:30px;margin-bottom:8px}
+.prob p{color:#3d3d3d;font-size:16px}
+.goal{margin-top:28px;padding:26px 30px;display:flex;gap:20px;align-items:center}
+.goal .tag{font-family:var(--f-hand);font-size:26px;font-weight:700;flex:none;padding:2px 14px;border:2.5px solid var(--ink);border-radius:var(--r2);background:var(--crayon-b)}
+.goal p{font-size:20px;font-weight:600}
+
+/* process timeline */
+.timeline{position:relative;display:grid;gap:56px}
+.timeline::before{content:"";position:absolute;left:23px;top:10px;bottom:10px;border-left:2.5px dashed var(--ink)}
+.round{position:relative;display:grid;grid-template-columns:48px minmax(0,1fr) minmax(0,1fr);gap:28px 40px;align-items:start}
+.dot{width:48px;height:48px;border-radius:50%;border:2.5px solid var(--ink);background:var(--paper);display:grid;place-items:center;font-family:var(--f-hand);font-weight:700;font-size:26px;position:relative;z-index:1}
+.round.key .dot{background:var(--crayon-o)}
+.round h3{font-size:38px;margin:4px 0 12px}
+.round .txt p+p{margin-top:12px}
+.round .txt{max-width:52ch}
+.label{display:inline-block;font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:2px 10px;border:2px solid var(--ink);border-radius:var(--r2);margin-bottom:6px;background:var(--paper)}
+.learned{margin-top:16px;padding:14px 18px;border-left:0;font-size:16px}
+.learned b{font-family:var(--f-hand);font-size:22px;display:block;line-height:1;margin-bottom:4px}
+.fig{display:grid;gap:10px;justify-items:center;margin:0;min-width:0}
+.fig figcaption{font-family:var(--f-hand);font-size:20px;color:var(--pencil);text-align:center;line-height:1.1}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:end;width:100%}
+.shot{border:2.5px solid var(--ink);border-radius:20px;overflow:hidden;background:var(--paper);box-shadow:5px 5px 0 var(--ink)}
+.shot img{width:100%}
+.ba{position:relative}
+.ba .chip{position:absolute;top:-14px;left:14px;z-index:1;font-family:var(--f-hand);font-weight:700;font-size:20px;padding:0 10px;border:2px solid var(--ink);border-radius:var(--r2);background:var(--paper)}
+.ba.after .chip{background:var(--crayon-o)}
+.zones{width:100%;max-width:400px;height:auto;display:block}
+.mini-explainer{width:100%;max-width:440px;padding:18px;display:grid;gap:12px}
+.mini-explainer .road{height:120px;border:2px solid var(--ink);border-radius:12px;background:repeating-linear-gradient(90deg,transparent 0 46%,var(--line) 46% 54%,transparent 54% 100%),var(--paper);position:relative;overflow:hidden}
+.mini-explainer .road::after{content:"";position:absolute;width:50px;height:24px;border:2px solid var(--ink);border-radius:6px;left:30%;top:58%;background:var(--paper)}
+.mini-explainer .road::before{content:"";position:absolute;left:12%;right:12%;top:46%;height:0;border-top:2px dashed var(--pencil)}
+.mini-explainer .row{display:flex;gap:8px}
+.mini-explainer .row span{flex:1;height:12px;border-radius:6px;background:var(--line)}
+.mini-explainer .btns{display:flex;gap:8px}
+.mini-explainer .btns span{padding:2px 12px;border:2px solid var(--ink);border-radius:var(--r2);font-family:var(--f-hand);font-size:18px;font-weight:700}
+
+/* palette exploration */
+.palettes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 14px;width:100%;max-width:420px}
+.pal{display:grid;gap:8px;justify-items:center;text-align:center}
+.pal .sw{width:100%;aspect-ratio:1;border:2.5px solid var(--ink);border-radius:var(--r1);display:grid;grid-template-columns:1fr 1fr;overflow:hidden;position:relative}
+.pal .sw i{display:block}
+.pal.no .sw::after{content:"";position:absolute;inset:-10%;background:linear-gradient(135deg,transparent calc(50% - 1.5px),var(--ink) calc(50% - 1.5px) calc(50% + 1.5px),transparent calc(50% + 1.5px))}
+.pal.final .sw{box-shadow:4px 4px 0 var(--ink)}
+.pal b{font-family:var(--f-hand);font-size:19px;line-height:1}
+.pal small{font-size:12px;color:var(--pencil);line-height:1.2}
+
+/* final screens */
+.screens{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px 32px}
+.screens .phone{width:100%;max-width:260px;margin:0 auto}
+.screens figure{margin:0;display:grid;gap:16px;justify-items:center}
+.screens figcaption{text-align:center;max-width:30ch}
+.screens figcaption b{display:block;font-family:var(--f-hand);font-size:28px;line-height:1;margin-bottom:4px}
+.screens figcaption span{font-size:15px;color:#3d3d3d}
+
+/* flow */
+.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}
+.flow .node{padding:10px 16px;font-family:var(--f-hand);font-size:22px;font-weight:700;line-height:1.05;text-align:center}
+.flow .arr{font-family:var(--f-hand);font-size:30px;font-weight:700}
+.flow .node.o{background:var(--crayon-o)}
+.flow .node.b{background:var(--crayon-b)}
+.flow-wrap{padding:28px;display:grid;gap:18px}
+.flow-wrap h3{font-size:32px}
+.flow-note{font-size:15px;color:#3d3d3d;max-width:70ch}
+
+/* system */
+.sys{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:18px}
+.card{padding:24px}
+.card h3{font-size:30px;margin-bottom:16px}
+.type{grid-column:span 5}
+.colors{grid-column:span 7}
+.comps{grid-column:span 12}
+.spec{display:grid;gap:14px}
+.spec .aa{font-family:var(--f-hand);font-size:84px;font-weight:700;line-height:.9}
+.spec .aa2{font-family:"Patrick Hand",var(--f-hand);font-size:40px;line-height:1}
+.spec small{display:block;color:var(--pencil);font-size:14px}
+.swatches{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.swatch{display:grid;gap:6px}
+.swatch i{display:block;aspect-ratio:1;border:2.5px solid var(--ink);border-radius:var(--r1)}
+.swatch b{font-family:var(--f-hand);font-size:20px;line-height:1}
+.swatch small{font-size:12.5px;color:var(--pencil);line-height:1.25}
+.comp-row{display:flex;flex-wrap:wrap;gap:28px 40px;align-items:flex-start}
+.comp{display:grid;gap:10px}
+.comp>small{font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--pencil)}
+.chipx{display:inline-flex;align-items:center;gap:8px;font-family:"Patrick Hand",var(--f-hand);font-size:18px;padding:2px 12px 2px 8px;border:2px solid var(--ink);border-radius:var(--r2);background:var(--paper)}
+.chipx i{width:16px;height:16px;border:2px solid var(--ink);border-radius:50%}
+.chipx.ok{background:var(--crayon-o)}
+.chipx.ok i{border:0;width:auto;height:auto;font-style:normal;font-family:var(--f-hand);font-weight:700;font-size:20px;line-height:1}
+.ctrl{display:flex;gap:8px}
+.ctrl span{width:74px;padding:6px 4px;border:2.5px solid var(--ink);border-radius:var(--r1);font-family:"Patrick Hand",var(--f-hand);font-size:15px;display:grid;justify-items:center;line-height:1.1;background:var(--paper)}
+.ctrl span.on{background:var(--crayon-o)}
+.ctrl svg{width:24px;height:24px}
+.gearx{display:grid;gap:4px;padding:5px;border:2.5px solid var(--ink);border-radius:var(--r2);width:84px;background:var(--paper)}
+.gearx span{font-family:var(--f-hand);font-weight:700;font-size:28px;text-align:center;line-height:1.3;border-radius:8px;border:2px solid transparent}
+.gearx span.on{background:var(--crayon-o);border-color:var(--ink)}
+.strip{display:flex;align-items:center;gap:10px;padding:6px 6px 6px 8px;border:2.5px solid var(--ink);border-radius:var(--r1);box-shadow:3px 4px 0 var(--ink);max-width:420px;background:var(--paper)}
+.strip .bang{flex:none;width:28px;height:28px;border:2.5px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-family:var(--f-hand);font-weight:700;font-size:20px}
+.strip p{font-family:"Patrick Hand",var(--f-hand);font-size:16px;line-height:1.15;flex:1}
+.strip .b{padding:2px 10px;border:2px solid var(--ink);border-radius:var(--r2);font-family:var(--f-hand);font-weight:700;font-size:18px}
+.strip .b.pri{background:var(--ink);color:var(--paper)}
+
+/* reflection */
+.reflect{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.reflect .card ul{margin:0;padding-left:20px;display:grid;gap:10px}
+.reflect .card li::marker{content:"✎  ";font-size:14px}
+.end{padding:44px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between;background:var(--crayon-b)}
+.end h2{font-size:clamp(40px,5vw,60px)}
+.end .cta{margin-top:0;background:var(--paper)}
+footer{padding-block:40px 56px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--pencil)}
+footer a{font-weight:700}
+
+/* responsive */
+@media (max-width:960px){
+  .hero{grid-template-columns:1fr;gap:32px}
+  .phones{min-height:0;padding-bottom:90px}
+  .sec-head{grid-template-columns:1fr}
+  .round{grid-template-columns:48px minmax(0,1fr)}
+  .round .fig{grid-column:2}
+
+  .type,.colors{grid-column:span 12}
+  .screens{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:640px){
+  body{font-size:16px}
+  section{padding-block:52px}
+  .phone{width:clamp(110px,30vw,170px);border-radius:26px;padding:5px;box-shadow:4px 4px 0 var(--ink)}
+  .phone img{border-radius:21px}
+  .phones .phone:nth-child(1){transform:translate(18px,40px) rotate(-5deg)}
+  .phones .phone:nth-child(3){transform:translate(-18px,52px) rotate(5deg)}
+  .phones{padding-bottom:56px}
+  .doodle-note{display:none}
+  .prob{grid-template-columns:1fr}
+  .goal{flex-direction:column;align-items:flex-start;padding:22px}
+  .timeline::before{left:17px}
+  .round{grid-template-columns:36px minmax(0,1fr);gap:18px}
+  .dot{width:36px;height:36px;font-size:20px}
+  .round h3{font-size:32px}
+  .pair{grid-template-columns:1fr}
+  .screens{grid-template-columns:1fr}
+  .swatches{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .reflect{grid-template-columns:1fr}
+  .end{padding:28px}
+  .meta{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.cta{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav" aria-label="Site">
+    <a class="logo" href="../index.html">Jun Zhao</a>
+    <ul>
+      <li><a href="../index.html#uiux" aria-current="page">UI/UX</a></li>
+      <li><a href="../index.html#top">Work</a></li>
+      <li><a href="../index.html#about">About</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div>
+      <div class="eyebrow"><b>UI/UX</b> mobile app · 2026</div>
+      <h1>G2 <span class="mark">Coach</span></h1>
+      <p class="lede">An app where new drivers practise Ontario's G2 road-test maneuvers by driving them with their thumbs, one step at a time.</p>
+      <div class="meta">
+        <div class="sk"><span>Role</span><strong>UX/UI design, prototyping</strong></div>
+        <div class="sk"><span>Timeline</span><strong>Nov 2026 · 2 days</strong></div>
+        <div class="sk"><span>Platform</span><strong>Mobile web (iOS · Android)</strong></div>
+        <div class="sk"><span>Tools</span><strong>Paper, HTML Canvas, Claude</strong></div>
+      </div>
+      <a class="cta" href="app/index.html" target="_blank" rel="noopener">Drive the prototype
+        <svg viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="26" cy="26" r="22" fill="#fff"/><path d="M14 27 Q 26 25 37 26 M29 18 L38 26 L29 34"/></svg></a>
+    </div>
+    <div class="phones" role="group" aria-label="Three app screens">
+      <div class="phone"><img src="images/screen-home.webp" alt="Home screen: progress card, up-next button and maneuver tiles" width="780" height="1688"></div>
+      <div class="phone"><img src="images/screen-parallel.webp" alt="Parallel parking, step 3: reversing at 45 degrees with the wheel at full right" width="780" height="1688"></div>
+      <div class="phone"><img src="images/screen-leftturn.webp" alt="Left turn at a light: waiting in the intersection for the oncoming car" width="780" height="1688"></div>
+      <div class="doodle-note" style="right:-6px;top:-8px">you drive it!
+        <svg viewBox="0 0 60 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M50 4 Q 40 30 12 32 M18 24 L10 32 L20 37"/></svg></div>
+    </div>
+  </header>
+</div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">01 · the problem</div>
+      <div>
+        <p class="big-quote">Reading the steps for a parallel park is easy. Doing them in the right order, in a real car, with an examiner beside you, is not.</p>
+      </div>
+    </div>
+    <ul class="prob" style="padding:0;margin:0">
+      <li class="sk"><h3>Handbooks are lists</h3><p>The official guide explains each maneuver as text. Learners memorise it, then freeze when they have to steer, check and brake at the same time.</p></li>
+      <li class="sk"><h3>Videos are passive</h3><p>Watching someone else reverse into a space doesn't build the habit of signalling first and looking over your shoulder.</p></li>
+      <li class="sk"><h3>Small misses cost marks</h3><p>A skipped shoulder check, a rolling stop or a tyre on the curb can lose points or end the test early.</p></li>
+    </ul>
+    <div class="goal sk shadow">
+      <span class="tag">goal</span>
+      <p>Turn each maneuver into something you drive yourself, with the examiner's checks built into every step.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">02 · process</div>
+      <div>
+        <h2>Six rounds of <span class="mark">try it, fix it</span></h2>
+        <p>Every round started from using the prototype on my phone and writing down what felt wrong. Here is what changed and why.</p>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <!-- R1 -->
+      <article class="round">
+        <div class="dot">1</div>
+        <div class="txt">
+          <span class="label">first idea</span>
+          <h3>An animated explainer</h3>
+          <p>The first version was a desktop page: pick a maneuver, press Play, and watch a top-down car perform it while a card lists the checks for each step.</p>
+          <div class="learned sk crayon-b"><b>what I learned</b>It looked tidy but felt like a website. Watching still isn't doing, and learners practise on their phones, not laptops.</div>
+        </div>
+        <figure class="fig">
+          <div class="mini-explainer sk shadow" aria-hidden="true">
+            <div class="road"></div>
+            <div class="row"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="btns"><span>Back</span><span>Next step</span><span>Play all</span></div>
+          </div>
+          <figcaption>round 1, redrawn as a wireframe</figcaption>
+        </figure>
+      </article>
+
+      <!-- R2 -->
+      <article class="round key">
+        <div class="dot">2</div>
+        <div class="txt">
+          <span class="label">layout</span>
+          <h3>Turn the road up the phone</h3>
+          <p>I rethought the screen as a phone in portrait: the road runs from top to bottom, with two parked cars on the right and your car about to reverse between them.</p>
+          <p>That split the screen into three zones that every later version kept. The step to do sits on top, the road fills the middle, and every control sits where the thumbs rest.</p>
+          <div class="learned sk crayon-b"><b>design rule</b>Phone first, portrait only, and the person drives. No Play button.</div>
+        </div>
+        <figure class="fig">
+          <svg class="zones" viewBox="0 0 380 460" role="img" aria-label="Layout diagram: a phone split into three zones. Top: the step and its checks. Middle: a vertical road with two parked cars and your car. Bottom: signal and look buttons, steering wheel, gear and pedal, inside the thumb zone." fill="none" stroke="#1b1b1b" stroke-linecap="round" stroke-linejoin="round">
+            <defs>
+              <pattern id="zhatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#d9d9d9" stroke-width="2"/></pattern>
+            </defs>
+            <rect x="20" y="10" width="200" height="436" rx="30" fill="#fff" stroke-width="3"/>
+            <!-- zone 1 -->
+            <rect x="34" y="34" width="172" height="58" rx="10" stroke-width="2.2" fill="#fff"/>
+            <path d="M44 48 h70 M44 62 h120" stroke-width="3"/>
+            <rect x="44" y="72" width="44" height="12" rx="6" fill="#f2851a" fill-opacity=".75" stroke-width="1.8"/>
+            <rect x="94" y="72" width="54" height="12" rx="6" stroke-width="1.8"/>
+            <!-- zone 2: road -->
+            <rect x="34" y="102" width="172" height="212" rx="10" stroke-width="2.2" fill="#fff"/>
+            <rect x="35" y="103" width="44" height="210" fill="url(#zhatch)" stroke="none"/>
+            <rect x="161" y="103" width="44" height="210" fill="url(#zhatch)" stroke="none"/>
+            <path d="M79 103 V313 M161 103 V313" stroke-width="2.4"/>
+            <path d="M120 110 V306" stroke="#8a8a8a" stroke-width="2.2" stroke-dasharray="12 10"/>
+            <rect x="136" y="124" width="22" height="44" rx="6" fill="url(#zhatch)" stroke-width="2"/>
+            <rect x="136" y="250" width="22" height="44" rx="6" fill="url(#zhatch)" stroke-width="2"/>
+            <rect x="112" y="186" width="22" height="44" rx="6" fill="#f2851a" fill-opacity=".8" stroke-width="2.2"/>
+            <path d="M116 196 L123 189 L130 196" stroke-width="2"/>
+            <path d="M146 236 C 150 222 152 208 140 196" stroke="#2c85d8" stroke-width="2.4" stroke-dasharray="5 5"/>
+            <path d="M136 203 L140 195 L147 199" stroke="#2c85d8" stroke-width="2.4"/>
+            <!-- zone 3: controls -->
+            <rect x="34" y="324" width="172" height="106" rx="10" stroke-width="2.2" fill="#fff"/>
+            <g stroke-width="1.8"><rect x="42" y="332" width="34" height="18" rx="5"/><rect x="81" y="332" width="34" height="18" rx="5"/><rect x="120" y="332" width="34" height="18" rx="5"/><rect x="159" y="332" width="38" height="18" rx="5"/></g>
+            <circle cx="72" cy="390" r="28" stroke-width="5"/><circle cx="72" cy="390" r="7" stroke-width="3"/>
+            <path d="M65 389 L46 384 M79 389 L98 384 M72 397 V416" stroke-width="3.5"/>
+            <rect x="110" y="360" width="38" height="62" rx="8" stroke-width="2"/>
+            <path d="M121 372 h16" stroke-width="2.5"/><rect x="116" y="383" width="26" height="14" rx="4" fill="#f2851a" fill-opacity=".75" stroke-width="1.6"/><path d="M121 410 h16" stroke-width="2.5"/>
+            <rect x="156" y="360" width="42" height="62" rx="14" stroke-width="2.2"/>
+            <path d="M168 378 h18 M168 388 h18 M168 398 h18" stroke-width="2.2"/>
+            <!-- thumb zone -->
+            <path d="M26 446 C 40 330 200 330 214 446" stroke="#2c85d8" stroke-width="2.6" stroke-dasharray="7 6"/>
+            <!-- callouts -->
+            <g font-family="Gaegu, 'Comic Sans MS', cursive" font-weight="700" fill="#1b1b1b" stroke="none" font-size="21">
+              <text x="248" y="58">what to do</text>
+              <text x="248" y="200">the road,</text><text x="248" y="222">top to bottom</text>
+              <text x="248" y="372">thumb zone</text>
+            </g>
+            <path d="M244 52 C 232 52 226 58 212 62" stroke-width="2"/><path d="M216 56 L210 63 L218 67" stroke-width="2"/>
+            <path d="M244 206 C 230 206 222 210 210 212" stroke-width="2"/><path d="M215 206 L208 212 L215 218" stroke-width="2"/>
+            <path d="M244 368 C 232 372 226 380 212 384" stroke="#2c85d8" stroke-width="2"/><path d="M216 378 L209 385 L217 390" stroke="#2c85d8" stroke-width="2"/>
+            <g font-family="Gaegu, 'Comic Sans MS', cursive" font-weight="700" stroke="none" font-size="44">
+              <text x="226" y="96" fill="#d9d9d9">1</text><text x="226" y="262" fill="#d9d9d9">2</text><text x="226" y="420" fill="#d9d9d9">3</text>
+            </g>
+          </svg>
+          <figcaption>three zones, redrawn as a layout diagram</figcaption>
+        </figure>
+      </article>
+
+      <!-- R3 -->
+      <article class="round">
+        <div class="dot">3</div>
+        <div class="txt">
+          <span class="label">interaction model</span>
+          <h3>Controls you'd find in a car</h3>
+          <p>I replaced the Play button with the four things a learner actually touches: a steering wheel you drag (one and a half turns each way), a P / R / D selector, a pedal you hold to creep, and buttons for the signal and each shoulder check.</p>
+          <p>Each step lists what it needs as small chips. A chip fills in the moment you do it, and when every chip is filled the next step starts on its own.</p>
+          <div class="learned sk crayon-b"><b>why chips?</b>They show progress without a "Next" button, so you never skip ahead by accident.</div>
+        </div>
+        <figure class="fig">
+          <div class="phone" style="width:min(250px,100%)"><img src="images/screen-parallel.webp" alt="Driving screen with step chips, road, signal and look buttons, wheel, gear selector and hold pedal" width="780" height="1688" loading="lazy"></div>
+          <figcaption>wheel · gear · pedal · checks</figcaption>
+        </figure>
+      </article>
+
+      <!-- R4 -->
+      <article class="round">
+        <div class="dot">4</div>
+        <div class="txt">
+          <span class="label">testing</span>
+          <h3>"I can't see anything"</h3>
+          <p>The first mistake message was a big card that slid over the road. On a phone it covered the car, the curb and the reason you'd failed.</p>
+          <p>It went through two shrinks before landing as a slim strip pinned to the top of the road: one line of advice, plus Retry and Restart.</p>
+          <div class="learned sk crayon-b"><b>fix</b>Feedback should point at the road, not cover it.</div>
+        </div>
+        <figure class="fig" style="width:100%">
+          <div class="pair">
+            <div class="ba"><span class="chip">before</span><div class="shot"><img src="images/process-v2-sheet.webp" alt="Earlier version: a large 'Try that again' card covering most of the road" width="1046" height="904" loading="lazy"></div></div>
+            <div class="ba after"><span class="chip">after</span><div class="shot"><img src="images/screen-error.webp" alt="Final version: a thin error strip at the top of the road with Retry and Restart" width="780" height="1688" loading="lazy" style="aspect-ratio:1046/904;object-fit:cover;object-position:50% 34%"></div></div>
+          </div>
+          <figcaption>error card → error strip</figcaption>
+        </figure>
+      </article>
+
+      <!-- R5 -->
+      <article class="round">
+        <div class="dot">5</div>
+        <div class="txt">
+          <span class="label">testing</span>
+          <h3>"Retry doesn't work"</h3>
+          <p>I did every check and nothing happened, and Retry seemed dead. The cause was a rule that fired on the very first frame: the car started close enough to the curb to count as "pulling over before signalling", so the step failed again the moment Retry reset it.</p>
+          <p>The controls also kept working while the game was paused, so chips ticked green even though nothing could move on.</p>
+          <div class="learned sk crayon-b"><b>fix</b>Only judge a move after the car actually moves. While a mistake is showing, grey out the controls and mark the strip with a "!".</div>
+        </div>
+        <figure class="fig">
+          <div class="shot" style="max-width:320px"><img src="images/process-v3-retry.webp" alt="Earlier dark version: chips ticked while a mistake strip is showing at the top of the road" width="880" height="1208" loading="lazy"></div>
+          <figcaption>chips ticked, but the step was already failed</figcaption>
+        </figure>
+      </article>
+
+      <!-- R6 -->
+      <article class="round key">
+        <div class="dot">6</div>
+        <div class="txt">
+          <span class="label">visual direction</span>
+          <h3>From slick to <span class="mark">scribbled</span></h3>
+          <p>I tried a sleek black-and-lime fintech look from a reference, then went back to black and white. Neither felt like learning to drive. It felt like a dashboard.</p>
+          <p>The direction that stuck came from a child's drawing of a car: wobbly pencil lines, a big obvious front, and a couple of colours filled in with crayon. I tightened the lines so it reads as neat, not messy, then tested colour pairs until crayon orange and blue felt right.</p>
+          <div class="learned sk crayon-b"><b>why doodle?</b>A test is stressful. A drawing you could have made yourself makes practice feel low-stakes, and the bold front of the car makes direction obvious at a glance.</div>
+        </div>
+        <figure class="fig" style="width:100%">
+          <div class="palettes">
+            <div class="pal no"><div class="sw"><i style="background:#0d0d0d"></i><i style="background:#cdf24b"></i></div><b>lime</b><small>too techy</small></div>
+            <div class="pal no"><div class="sw"><i style="background:#fff"></i><i style="background:#0b0b0b"></i></div><b>mono</b><small>too serious</small></div>
+            <div class="pal no"><div class="sw"><i style="background:#ffd447"></i><i style="background:#8cc2f2"></i></div><b>watercolour</b><small>too soft</small></div>
+            <div class="pal no"><div class="sw"><i style="background:#ff8068"></i><i style="background:#78d0a0"></i></div><b>coral · mint</b><small>too sweet</small></div>
+            <div class="pal no"><div class="sw"><i style="background:#ffa53d"></i><i style="background:#6eb4f0"></i></div><b>orange · sky</b><small>flat fill</small></div>
+            <div class="pal final"><div class="sw"><i class="crayon-o"></i><i class="crayon-b"></i></div><b>crayon ✓</b><small>final</small></div>
+          </div>
+          <figcaption>colour pairs I tried, in order</figcaption>
+        </figure>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section id="final">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">03 · final design</div>
+      <div>
+        <h2>Five maneuvers, <span class="mark">one rhythm</span></h2>
+        <p>Three-point turn, parallel parking, roadside stop, lane change and left turn at a light. Every one uses the same loop: read the step, do the checks, drive, stop.</p>
+      </div>
+    </div>
+    <div class="screens">
+      <figure><div class="phone"><img src="images/screen-home.webp" alt="Home screen" width="780" height="1688" loading="lazy"></div>
+        <figcaption><b>Home</b><span>Progress up top, the next unfinished maneuver as one big button, and finished ones filled in blue.</span></figcaption></figure>
+      <figure><div class="phone"><img src="images/screen-lane.webp" alt="Lane change with a car in the blind spot and the left shoulder check sweep" width="780" height="1688" loading="lazy"></div>
+        <figure style="display:none"></figure>
+        <figcaption><b>Shoulder check</b><span>Tapping "look left" sweeps the blind spot in blue, and here it reveals the car you'd have hit.</span></figcaption></figure>
+      <figure><div class="phone"><img src="images/screen-leftturn.webp" alt="Left turn waiting for the oncoming car" width="780" height="1688" loading="lazy"></div>
+        <figcaption><b>Real traffic</b><span>The oncoming car arrives after you stop in the intersection. Turn early and you hit it.</span></figcaption></figure>
+      <figure><div class="phone"><img src="images/screen-parallel.webp" alt="Parallel parking mid-reverse" width="780" height="1688" loading="lazy"></div>
+        <figcaption><b>Your car is orange</b><span>Parked cars are hatched grey. Big headlights and a hood arrow show which way is forward.</span></figcaption></figure>
+      <figure><div class="phone"><img src="images/screen-error.webp" alt="Mistake strip at top of the road" width="780" height="1688" loading="lazy"></div>
+        <figcaption><b>Mistakes stay small</b><span>One line of advice and Retry. Controls grey out so you can't tick checks for a step that already failed.</span></figcaption></figure>
+      <figure><div class="phone"><img src="images/screen-success.webp" alt="Success toast after completing a step" width="780" height="1688" loading="lazy"></div>
+        <figcaption><b>Nice!</b><span>Finishing a step pops a quick note and moves straight on, so the drive keeps flowing.</span></figcaption></figure>
+    </div>
+
+    <div class="flow-wrap sk shadow" style="margin-top:64px">
+      <h3>How a step works</h3>
+      <div class="flow" role="img" aria-label="Flow: read the step, do the checks, drive, all chips filled leads to next step; a mistake leads to the error strip and Retry back to the start of the step">
+        <span class="node sk">read the step</span><span class="arr" aria-hidden="true">→</span>
+        <span class="node sk">signal + look</span><span class="arr" aria-hidden="true">→</span>
+        <span class="node sk">steer · gear · hold</span><span class="arr" aria-hidden="true">→</span>
+        <span class="node sk o">all chips filled → next step</span>
+      </div>
+      <div class="flow" aria-hidden="true">
+        <span class="arr" style="margin-left:4px">↳</span>
+        <span class="node sk b">mistake → strip → Retry this step</span>
+      </div>
+      <p class="flow-note">Each step has its own checks (for example "Signal right", "Right shoulder check", "Stop by the curb") and its own guard rules (for example "don't move toward the curb before signalling"). Retry rewinds to where that step began, not to the start of the maneuver.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SYSTEM -->
+<section id="system">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">04 · design system</div>
+      <div>
+        <h2>Pencil, paper, <span class="mark">two crayons</span></h2>
+        <p>Everything is black line on white. Colour only ever means one of two things.</p>
+      </div>
+    </div>
+    <div class="sys">
+      <div class="card sk type">
+        <h3>Type</h3>
+        <div class="spec">
+          <div><div class="aa">Aa Gaegu</div><small>Headings, buttons, gears. Bold and handwritten.</small></div>
+          <div><div class="aa2">Patrick Hand</div><small>Instructions, chips and tips. Neat handwriting that stays readable at 14px.</small></div>
+        </div>
+      </div>
+      <div class="card sk colors">
+        <h3>Colour</h3>
+        <div class="swatches">
+          <div class="swatch"><i style="background:#1b1b1b"></i><b>ink</b><small>#1B1B1B · all lines</small></div>
+          <div class="swatch"><i style="background:#8a8a8a"></i><b>pencil</b><small>#8A8A8A · hints, lane dashes</small></div>
+          <div class="swatch"><i style="background:#fff;background-image:linear-gradient(#eceef1 1px,transparent 1px),linear-gradient(90deg,#eceef1 1px,transparent 1px);background-size:10px 10px"></i><b>paper</b><small>#FFFFFF · grid ground</small></div>
+          <div class="swatch"><i class="crayon-o"></i><b>crayon orange</b><small>#F2851A · you, and what's done</small></div>
+          <div class="swatch"><i class="crayon-b"></i><b>crayon blue</b><small>#2C85D8 · where to look, where to park</small></div>
+        </div>
+      </div>
+      <div class="card sk comps">
+        <h3>Components</h3>
+        <div class="comp-row">
+          <div class="comp"><small>Step chip</small>
+            <span class="chipx"><i></i>Right shoulder check</span>
+            <span class="chipx ok"><i>✓</i>Signal right</span></div>
+          <div class="comp"><small>Checks</small>
+            <div class="ctrl">
+              <span class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 12l8-7v4h8v6h-8v4z"/></svg>signal</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 13s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 13 2 13z"/><circle cx="12" cy="13" r="2.6" fill="currentColor"/><path d="M6 2 2 5l4 3"/></svg>look left</span>
+            </div></div>
+          <div class="comp"><small>Gear</small><div class="gearx"><span>P</span><span class="on">R</span><span>D</span></div></div>
+          <div class="comp" style="flex:1 1 320px"><small>Mistake strip</small>
+            <div class="strip"><span class="bang">!</span><p>Signal right and check your right shoulder before pulling over.</p><span class="b pri">Retry</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REFLECTION -->
+<section id="reflection">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">05 · reflection</div>
+      <div><h2>What I'd <span class="mark">do next</span></h2></div>
+    </div>
+    <div class="reflect">
+      <div class="card sk">
+        <h3>What I learned</h3>
+        <ul>
+          <li>The biggest fixes came from using it, not from planning it. The covered road and the "dead" Retry button were obvious on a phone and invisible on a laptop.</li>
+          <li>A rule that judges the player has to wait for the player to act. Otherwise it feels broken, even when it's technically right.</li>
+          <li>Style changed how the task feels. The same steps felt like a test in black and lime, and like practice in crayon.</li>
+        </ul>
+      </div>
+      <div class="card sk">
+        <h3>Next steps</h3>
+        <ul>
+          <li>Test with five learners booked for a G2 test and time how long each maneuver takes them.</li>
+          <li>Add "full left / full right" shortcuts beside the wheel, since one and a half turns is a lot of dragging on a small screen.</li>
+          <li>Add a roadside-stop-to-highway merge and a school-zone scenario.</li>
+          <li>Add haptics when the car touches the curb.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="end sk shadow">
+    <h2>Take it for a spin</h2>
+    <a class="cta" href="app/index.html" target="_blank" rel="noopener">Drive the prototype
+      <svg viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="26" cy="26" r="22" fill="#fff"/><path d="M14 27 Q 26 25 37 26 M29 18 L38 26 L29 34"/></svg></a>
+  </div>
+  <footer>
+    <span>© 2026 Jun Zhao · junzhaodesign.com</span>
+    <span>Based on common Ontario G2 practice. Not affiliated with the MTO or DriveTest. <a href="../index.html#uiux">← All UI/UX work</a></span>
+  </footer>
+</div>
+</body>
+</html>

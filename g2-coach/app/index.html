@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>G2 Maneuver Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Patrick+Hand&display=swap">
+<style>
+/* Layout: phone-width app drawn like a kid's pencil doodle on graph paper. Single light look on purpose: ink on paper. */
+:root{
+  --paper:#ffffff; --grid:#eceef1; --ink:#1b1b1b; --pencil:#8a8a8a; --hatch:#d9d9d9; --soft:#f4f4f4;
+  --f-hand:"Gaegu","Comic Sans MS","Chalkboard SE",cursive;
+  --f-body:"Patrick Hand","Comic Sans MS","Chalkboard SE",cursive;
+  --r1:16px 14px 16px 14px/14px 16px 14px 16px;
+  --r2:14px 16px 14px 16px/16px 14px 16px 14px;
+  --r3:8px;
+  --wy:#ffa53d; --wb:#6eb4f0;
+  --wash-y:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='c'%20x='0'%20y='0'%20width='100%'%20height='100%'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.85%200.07'%20numOctaves='3'%20seed='3'/%3E%3CfeColorMatrix%20values='0%200%200%200%200.95%200%200%200%200%200.52%200%200%200%200%200.1%200%200%200%20-2.6%202.05'/%3E%3C/filter%3E%3Cg%20transform='rotate(-24%2080%2080)'%3E%3Crect%20x='-60'%20y='-60'%20width='280'%20height='280'%20filter='url(%23c)'/%3E%3C/g%3E%3C/svg%3E") 0 0/160px 160px;
+  --wash-b:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='c'%20x='0'%20y='0'%20width='100%'%20height='100%'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.85%200.07'%20numOctaves='3'%20seed='9'/%3E%3CfeColorMatrix%20values='0%200%200%200%200.17%200%200%200%200%200.52%200%200%200%200%200.85%200%200%200%20-2.6%202.05'/%3E%3C/filter%3E%3Cg%20transform='rotate(-24%2080%2080)'%3E%3Crect%20x='-60'%20y='-60'%20width='280'%20height='280'%20filter='url(%23c)'/%3E%3C/g%3E%3C/svg%3E") 0 0/160px 160px;
+  color-scheme:light;
+}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.35;-webkit-tap-highlight-color:transparent}
+#app{height:100%;max-width:460px;margin:0 auto;position:relative}
+.view{height:100%;display:flex;flex-direction:column;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));box-sizing:border-box}
+h1,h2,h3{margin:0;font-family:var(--f-hand);text-wrap:balance}
+button{font-family:var(--f-body);color:inherit;background:none;border:0;cursor:pointer;text-align:left;padding:0}
+button:focus-visible{outline:2.5px dashed var(--ink);outline-offset:4px}
+svg{display:block}
+.sk{border:2.5px solid var(--ink);border-radius:var(--r1);background:var(--paper)}
+.hatch{background-image:repeating-linear-gradient(-45deg,var(--hatch) 0 1.5px,transparent 1.5px 7px)}
+.rough{filter:url(#rough)}
+
+/* home */
+#home{overflow-y:auto;padding-block:20px 28px;gap:16px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.tag{font-size:16px;padding:4px 12px;border:2px solid var(--ink);border-radius:var(--r2);background:var(--paper);display:inline-block}
+#home h1{font-size:clamp(50px,15vw,64px);font-weight:700;line-height:.88;letter-spacing:-.01em;margin-top:4px}
+#home h1 u{text-decoration:none;background:var(--wash-y);padding:0 6px;border-radius:6px 10px 5px 12px}
+.mascot{width:100%;max-width:330px;height:auto;aspect-ratio:330/150;flex:none;margin:-6px auto -4px}
+.prog{padding:14px 18px;display:grid;gap:8px;box-shadow:4px 4px 0 var(--ink)}
+.prow{display:flex;justify-content:space-between;align-items:center;font-size:16px;color:var(--pencil)}
+.pnum{display:flex;align-items:baseline;gap:8px;font-family:var(--f-hand)}
+.pnum b{font-size:50px;line-height:.9;font-weight:700}
+.pnum span{font-size:22px}
+.pbar{height:16px;border:2px solid var(--ink);border-radius:var(--r3);overflow:hidden;background:var(--paper)}
+.pbar i{display:block;height:100%;background:var(--wash-b);border-right:2px solid var(--ink);transition:width .4s}
+.prog small{font-size:15px;color:var(--pencil)}
+.upnext{background:var(--wash-y);color:var(--ink);border:2.5px solid var(--ink);border-radius:var(--r2);padding:14px 12px 14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;box-shadow:4px 4px 0 var(--pencil)}
+.upnext small{display:block;font-size:15px;opacity:.7}
+.upnext b{display:block;font:700 30px/1 var(--f-hand)}
+.upnext em{font-style:normal;font-size:15px;opacity:.7}
+.arrow{width:52px;height:52px;flex:none;color:var(--ink)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tile{border:2.5px solid var(--ink);border-radius:var(--r1);background:var(--paper);padding:12px 14px 14px;display:grid;gap:2px;min-height:128px;align-content:space-between;min-width:0;position:relative;box-shadow:3px 4px 0 var(--ink)}
+.tile:nth-child(2n){border-radius:var(--r2)}
+.tile .ic{width:44px;height:44px;border:2px solid var(--ink);border-radius:50%;display:grid;place-items:center;margin-bottom:10px;background:var(--paper)}
+.tile .ic svg{width:24px;height:24px}
+.tile b{font:700 22px/1 var(--f-hand)}
+.tile small{color:var(--pencil);font-size:15px}
+.tile.done{background:var(--wash-b)}
+.tile.done::after{content:"✓";position:absolute;top:4px;right:12px;font:700 40px/1 var(--f-hand);}
+.tile.done small{color:var(--ink)}
+.tile.info{border-style:dashed;box-shadow:none}
+.note{font-size:14px;color:var(--pencil);margin:4px 0 0}
+
+/* play */
+#play{overflow:hidden;touch-action:manipulation;user-select:none;-webkit-user-select:none;padding-block:8px 12px;gap:9px}
+.bar{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;height:44px;flex:none}
+.bar .ttl{text-align:center;font:700 26px/1 var(--f-hand)}
+.iconbtn{width:42px;height:42px;border:2.5px solid var(--ink);border-radius:50%;display:grid;place-items:center;background:var(--paper)}
+.iconbtn svg{width:20px;height:20px}
+.coach{flex:none;display:grid;gap:5px;padding:10px 14px 12px;box-shadow:3px 4px 0 var(--ink);transition:transform .2s}
+.coach.flash{transform:scale(1.02)}
+.dots{display:flex;gap:6px}
+.dots i{flex:1;height:8px;border:2px solid var(--ink);border-radius:var(--r3);background:var(--paper)}
+.dots i.on{background:var(--wash-y)}
+.coach .lbl{font-size:14px;color:var(--pencil)}
+.coach h2{font-size:25px;font-weight:700;line-height:1}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:15px;padding:2px 10px 2px 6px;border:2px solid var(--ink);border-radius:var(--r2);background:var(--paper)}
+.chip i{width:15px;height:15px;border:2px solid currentColor;border-radius:45% 55% 50% 50%;box-sizing:border-box;display:grid;place-items:center}
+.chip.ok{background:var(--wash-y);color:var(--ink)}
+.chip.ok i{border:0;width:auto;height:auto}
+.chip.ok i::after{content:"✓";font:700 17px/1 var(--f-hand)}
+.tip{margin:0;font-size:14.5px;color:var(--pencil);line-height:1.25}
+.stage{flex:1;min-height:150px;position:relative;overflow:hidden;border:2.5px solid var(--ink);border-radius:24px;background:var(--paper)}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+.toast{position:absolute;left:50%;top:10px;transform:translateX(-50%);background:var(--paper);color:var(--ink);border:2.5px solid var(--ink);border-radius:var(--r2);font:700 19px/1.1 var(--f-hand);padding:5px 14px;white-space:nowrap;max-width:88%;overflow:hidden;text-overflow:ellipsis;box-shadow:3px 3px 0 var(--ink)}
+.sheet{position:absolute;inset:8px 8px auto;background:var(--paper);border:2.5px solid var(--ink);border-radius:var(--r1);padding:6px 6px 6px 8px;display:flex;align-items:center;gap:8px;box-shadow:3px 4px 0 var(--ink)}
+.sheet h3{display:none}
+.sheet::before{content:"!";flex:none;width:26px;height:26px;border:2.5px solid var(--ink);border-radius:50% 45% 55% 48%;display:grid;place-items:center;font:700 20px/1 var(--f-hand);box-sizing:border-box}
+.sheet[data-kind="ok"]::before{content:"✓"}
+.sheet p{margin:0;flex:1;min-width:0;font-size:14.5px;line-height:1.15}
+.sheet .btns{display:flex;gap:5px;flex:none}
+.btn{padding:3px 10px;border:2px solid var(--ink);border-radius:var(--r2);font:700 17px/1.1 var(--f-hand);background:var(--paper);white-space:nowrap}
+.btn.pri{background:var(--ink);color:var(--paper)}
+.controls{flex:none;display:grid;gap:9px;transition:opacity .2s}
+.controls.locked{opacity:.3;pointer-events:none}
+.row1{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.cbtn{display:grid;justify-items:center;gap:0;padding:5px 2px 4px;border:2.5px solid var(--ink);border-radius:var(--r1);background:var(--paper);font-size:14px;text-align:center;line-height:1.1}
+.cbtn:nth-child(2n){border-radius:var(--r2)}
+.cbtn svg{width:24px;height:24px}
+.cbtn.on{background:var(--wash-y);color:var(--ink)}
+.cbtn.on.sig svg{animation:blink .7s steps(1) infinite}
+@keyframes blink{50%{opacity:.2}}
+.row2{display:grid;grid-template-columns:122px 1fr 96px;gap:10px;align-items:stretch}
+.wheel{display:grid;justify-items:center;gap:0}
+.wheel svg{width:112px;height:112px;touch-action:none;cursor:grab}
+.wheel small{font:700 17px/1 var(--f-hand)}
+.gear{display:grid;grid-template-rows:repeat(3,1fr);gap:4px;padding:5px;border:2.5px solid var(--ink);border-radius:var(--r2);background:var(--paper)}
+.gear button{font:700 28px/1 var(--f-hand);text-align:center;border-radius:var(--r3);border:2px solid transparent}
+.gear button[aria-pressed="true"]{background:var(--wash-y);color:var(--ink);border-color:var(--ink)}
+.pedal{border:2.5px solid var(--ink);border-radius:26px;display:grid;place-items:center;align-content:center;gap:6px;touch-action:none;font:700 22px/1 var(--f-hand);text-align:center;box-shadow:3px 4px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.pedal svg{width:46px;height:46px}
+.pedal.down{transform:translate(3px,4px);box-shadow:0 0 0 var(--ink);background:var(--wash-y)}
+@media (max-height:700px){.row2{grid-template-columns:104px 1fr 86px}.wheel svg{width:94px;height:94px}.coach h2{font-size:21px}.tip{display:none}.mascot{display:none}}
+@media (prefers-reduced-motion:reduce){.cbtn.on.sig svg{animation:none}}
+</style>
+<style>html,body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="crayon" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9 0.08" numOctaves="3" seed="7" result="n"/><feColorMatrix in="n" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.6 2.05" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in"/></filter><filter id="rough" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="1.3"/></filter></svg>
+
+<div id="app">
+  <section class="view" id="home">
+    <div class="top">
+      <span class="tag">Ontario G2 practice</span>
+    </div>
+    <h1>Ready for<br>your <u>G2</u>?</h1>
+    <svg class="mascot rough" viewBox="0 0 330 150" role="img" aria-label="A hand-drawn car" fill="none" stroke="#1b1b1b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 138 Q 165 132 322 139" stroke-width="2.4"/>
+      <path d="M30 112 L30 74 L92 72 L120 30 L214 30 L250 72 L302 76 Q 314 78 314 92 L314 112 Z" fill="#fff"/>
+      <path d="M36 110 L34 78 L95 76 L123 35 L210 34 L247 76 L300 80 Q 311 84 310 96 L309 108 Z" fill="#f2851a" stroke="none" filter="url(#crayon)"/>
+      <path d="M131 41 L111 69 L169 69 L169 41 Z M185 41 L185 69 L232 69 L206 41 Z" fill="#2c85d8" stroke="none" filter="url(#crayon)"/>
+      <path d="M128 38 L106 72 L172 72 L172 38 Z M182 38 L182 72 L238 72 L208 38 Z"/>
+      <path d="M172 72 L172 112 M120 92 L136 92 M186 92 L202 92"/>
+      <path d="M30 86 L44 86 M302 88 L314 88"/>
+      <circle cx="300" cy="92" r="7" fill="#fff"/><path d="M314 86 L326 82 M315 93 L328 94 M313 100 L325 105" stroke-width="2.2"/>
+      <circle cx="82" cy="114" r="20" fill="#fff"/><circle cx="82" cy="114" r="7"/>
+      <circle cx="252" cy="114" r="20" fill="#fff"/><circle cx="252" cy="114" r="7"/>
+      <path d="M14 98 q -6 -4 -2 -10 M8 108 q -7 -2 -4 -8" stroke-width="2"/>
+    </svg>
+    <div class="prog sk">
+      <div class="prow"><span>my progress</span><span>5 moves</span></div>
+      <div class="pnum"><b id="pNum">0</b><span>of 5 done</span></div>
+      <div class="pbar"><i id="pBar"></i></div>
+      <small id="pNote"></small>
+    </div>
+    <button class="upnext" id="upNext">
+      <span><small>up next</small><b id="upName"></b><em id="upSub"></em></span>
+      <svg class="arrow rough" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="26" cy="26" r="22"/><path d="M14 27 Q 26 25 37 26 M29 18 L38 26 L29 34"/></svg>
+    </button>
+    <div class="tiles" id="mlist"></div>
+    <p class="note">Based on common Ontario G2 practice. Check the official MTO Driver's Handbook too.</p>
+  </section>
+
+  <section class="view" id="play" hidden>
+    <div class="bar">
+      <button class="iconbtn" id="back" aria-label="Back to maneuvers"><svg class="rough" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div class="ttl" id="mname"></div>
+      <button class="iconbtn" id="restart" aria-label="Restart maneuver"><svg class="rough" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></svg></button>
+    </div>
+    <div class="coach sk" id="coach">
+      <div class="dots" id="dots"></div>
+      <div class="lbl" id="slbl"></div>
+      <h2 id="stitle"></h2>
+      <div class="chips" id="chips"></div>
+      <p class="tip" id="tip"></p>
+    </div>
+    <div class="stage" id="stage">
+      <canvas id="cv"></canvas>
+      <div class="toast" id="toast" hidden></div>
+      <div class="sheet" id="sheet" hidden>
+        <h3 id="shT"></h3><p id="shM"></p>
+        <div class="btns" id="shB"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="row1">
+        <button class="cbtn sig" id="sigL"><svg class="rough" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 12l8-7v4h8v6h-8v4z"/></svg>signal</button>
+        <button class="cbtn" id="lookL"><svg class="rough" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 13s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 13 2 13z"/><circle cx="12" cy="13" r="2.6" fill="currentColor"/><path d="M6 2 2 5l4 3"/></svg>look left</button>
+        <button class="cbtn" id="lookR"><svg class="rough" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 13s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 13 2 13z"/><circle cx="12" cy="13" r="2.6" fill="currentColor"/><path d="m18 2 4 3-4 3"/></svg>look right</button>
+        <button class="cbtn sig" id="sigR"><svg class="rough" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M20 12l-8-7v4H4v6h8v4z"/></svg>signal</button>
+      </div>
+      <div class="row2">
+        <div class="wheel">
+          <svg id="wheel" viewBox="0 0 120 120" aria-label="Steering wheel, drag to turn"><g id="wheelG"><g class="rough" fill="none" stroke="#1b1b1b" stroke-linecap="round">
+            <circle cx="60" cy="60" r="50" stroke-width="7" fill="#fff"/>
+            <circle cx="60" cy="60" r="41" stroke-width="2.5"/>
+            <path d="M48 58 L20 52 M72 58 L100 52 M60 72 L60 104" stroke-width="7"/>
+            <circle cx="60" cy="60" r="14" stroke-width="5" fill="#fff"/>
+            <path d="M54 14 Q60 4 66 14" stroke-width="5"/>
+          </g></g></svg>
+          <small id="wheelLbl">Straight</small>
+        </div>
+        <div class="gear" role="group" aria-label="Gear">
+          <button id="gP" aria-pressed="false">P</button>
+          <button id="gR" aria-pressed="false">R</button>
+          <button id="gD" aria-pressed="true">D</button>
+        </div>
+        <button class="pedal" id="pedal" aria-label="Hold to drive"><svg class="rough" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 6 L32 6 Q38 6 38 12 L36 40 Q36 44 32 44 L16 44 Q12 44 12 40 L10 12 Q10 6 16 6Z"/><path d="M17 15h14M17 22h14M17 29h14M17 36h14"/></svg>hold</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const D2R=Math.PI/180, R2D=180/Math.PI;
+const WB=36, MAXS=36*D2R, HL=30, HW=14;          // wheelbase, max steer, half length/width
+const VX0=30, VW=300;                            // visible world x range
+const rect=(a,b,c,d)=>[[a,b],[c,b],[c,d],[a,d]];
+const ad=(a,b)=>Math.abs(((a-b)%360+540)%360-180);
+
+/* ---------- scenes ---------- */
+const streetBlocks=H=>[rect(-200,-400,125,H+400),rect(235,-400,560,H+400)];
+const crossBlocks=H=>[rect(-200,-400,125,400),rect(235,-400,560,400),rect(-200,510,125,H+400),rect(235,510,560,H+400)];
+
+/* ---------- step helpers ---------- */
+const sig=s=>({l:s==="L"?"Signal left":s==="R"?"Signal right":"Signal off",ok:G=>G.sig===(s||null)});
+const chk=s=>({l:s==="L"?"Left shoulder check":"Right shoulder check",ok:G=>G.chk[s]});
+const gear=g=>({l:"Gear "+g,ok:G=>G.gear===g});
+const pose=(l,f)=>({l,ok:f});
+
+const M=[
+{id:"three",name:"Three-point turn",short:"Turn around on a narrow street",H:1200,scene:"street",start:[200,900,270],steps:[
+ {t:"Pull over to the right curb",tip:"Signal and check before you move over, then stop close and parallel.",
+  c:[sig("R"),chk("R"),pose("Stop by the curb",G=>G.stopped&&G.maxX>222&&ad(G.hd,270)<10)],
+  guard:G=>G.cx-G.ss[0]>5&&!(G.sig==="R"&&G.chk.R)?"Signal right and check your right shoulder before pulling over.":null},
+ {t:"Get ready to turn",tip:"Signal left and look over your left shoulder. If a car comes, wait.",
+  c:[sig("L"),chk("L")],guard:G=>G.trav>12?"Signal and check before you start the turn.":null},
+ {t:"Wheel full left, creep to the far curb",tip:"Turn the wheel all the way left as you roll. Stop before you touch the curb.",
+  c:[gear("D"),pose("Stop near the far curb",G=>G.stopped&&G.minX<150&&G.hd>150&&G.hd<232)]},
+ {t:"Reverse with the wheel full right",tip:"Shift to R, look back over your right shoulder and back up slowly.",
+  c:[gear("R"),pose("Back up, then stop",G=>G.stopped&&G.hd>95&&G.hd<174&&G.trav>14)]},
+ {t:"Drive off in the new lane",tip:"Shift to D, steer left and straighten up in the lane.",
+  c:[gear("D"),pose("Drive away straight",G=>ad(G.hd,90)<12&&G.cx>128&&G.cx<190&&G.trav>60)]}
+]},
+{id:"parallel",name:"Parallel parking",short:"Reverse into a space between two cars",H:1200,scene:"street",start:[178,980,270],
+ parked:[[219,380],[219,600],[219,800],[219,1010]],steps:[
+ {t:"Pull up beside the front car",tip:"About 1 m beside it, with your rear bumpers lined up.",ghost:[178,604,270],
+  c:[sig("R"),pose("Rear bumpers lined up",G=>G.stopped&&Math.abs(G.cx-178)<14&&G.tailY>612&&G.tailY<660&&ad(G.hd,270)<8)]},
+ {t:"Shift to R and check",tip:"Look over your right shoulder for cyclists and pedestrians.",
+  c:[gear("R"),chk("R")],guard:G=>G.trav>14?"Shift to R and check your right shoulder first.":null},
+ {t:"Back in with the wheel full right",tip:"Turn full right once your rear wheels pass its bumper. Stop at about 45°.",
+  c:[gear("R"),pose("Stop at about 45°",G=>G.stopped&&G.hd>214&&G.hd<252&&G.tailX>188)]},
+ {t:"Wheel full left, keep backing",tip:"When your front clears the car ahead, turn full left to swing in.",
+  c:[gear("R"),pose("Straight in the space",G=>G.stopped&&ad(G.hd,270)<8&&G.cx>200&&G.cx<222)]},
+ {t:"Centre the car and park",tip:"Leave room in front and behind, then shift to P.",ghost:[219,700,270],
+  c:[gear("P"),pose("Centred in the space",G=>ad(G.hd,270)<8&&G.cx>200&&G.cx<222&&G.cy>675&&G.cy<725)]}
+]},
+{id:"roadside",name:"Roadside stop",short:"Pull over, stop and rejoin traffic",H:1200,scene:"street",start:[207,1000,270],steps:[
+ {t:"Signal and check right",tip:"The examiner will ask you to pull over somewhere safe and legal.",
+  c:[sig("R"),chk("R")],guard:G=>G.cx-G.ss[0]>5&&!(G.sig==="R"&&G.chk.R)?"Signal right and check your right shoulder before moving over.":null},
+ {t:"Pull over and stop by the curb",tip:"Ease over and stop close to the curb, parallel to it.",
+  c:[pose("Stop close to the curb",G=>G.stopped&&G.maxX>223&&ad(G.hd,270)<8)]},
+ {t:"Secure the car",tip:"Cancel the signal and shift to P.",
+  c:[sig(null),gear("P")]},
+ {t:"Get ready to rejoin",tip:"Shift to D, signal left and check over your left shoulder.",
+  c:[gear("D"),sig("L"),chk("L")],guard:G=>G.trav>12?"Signal left and check your left shoulder before pulling out.":null},
+ {t:"Pull back into the lane",tip:"Steer smoothly back to the middle of the lane.",
+  c:[pose("Back in your lane",G=>G.cx>193&&G.cx<221&&G.trav>90&&ad(G.hd,270)<8)]}
+]},
+{id:"lane",name:"Lane change",short:"Move left safely with a car coming",H:1500,scene:"lanes",start:[207,1300,270],
+ traffic:[[152,1470,270,88]],steps:[
+ {t:"Signal left",tip:"Signal early so drivers around you know your plan.",
+  c:[sig("L")],guard:G=>G.cx<192?"Signal and check before you move over.":null},
+ {t:"Check your left blind spot",tip:"Mirrors miss the car beside you. Turn your head.",
+  c:[chk("L")],guard:G=>G.cx<192?"Do a shoulder check before you move over.":null},
+ {t:"Steer into the left lane",tip:"Wait until the lane is clear, then move over gently.",
+  c:[pose("Centred in the left lane",G=>G.cx>138&&G.cx<166&&ad(G.hd,270)<8&&G.trav>40)]},
+ {t:"Cancel the signal",tip:"A signal left on confuses other drivers.",c:[sig(null)]}
+]},
+{id:"left",name:"Left turn at a light",short:"Wait for a gap, then turn left",H:1200,scene:"cross",start:[207,950,270],steps:[
+ {t:"Signal and check left",tip:"Do this before you reach the intersection.",
+  c:[sig("L"),chk("L")],guard:G=>G.noseY<535?"Signal and check before you reach the intersection.":null},
+ {t:"Pull in and wait, wheels straight",tip:"On a green light, move into the intersection and stop. Keep the wheel straight.",
+  c:[pose("Stopped in the intersection",G=>G.stopped&&G.noseY>425&&G.noseY<502&&G.cx>190&&G.cx<224),
+     pose("Wheels straight",G=>Math.abs(G.steer)<.07)],
+  guard:G=>ad(G.hd,270)>15?"Wait for oncoming traffic before turning.":null,
+  done:G=>G.traffic.push({cx:153,cy:G.camY-90,h:90*D2R,v:92,tag:"on"})},
+ {t:"Let the oncoming car pass",tip:"Turning in front of it is an automatic fail.",
+  c:[pose("Oncoming car has passed",G=>{const o=G.traffic.find(t=>t.tag==="on");return o&&o.cy>G.cy+60})],
+  guard:G=>ad(G.hd,270)>12?"Wait for the oncoming car to pass first.":null},
+ {t:"Turn into the nearest lane",tip:"Turn left into the lane just past the centre line.",
+  c:[pose("In the westbound lane",G=>ad(G.hd,180)<14&&G.cy>404&&G.cy<452&&G.cx<112)]}
+]}
+];
+
+/* ---------- icons for home list ---------- */
+const ICON={
+ three:'<path d="M17 20V9a5 5 0 0 0-10 0v3"/><path d="M4 9l3 3 3-3"/>',
+ parallel:'<rect x="14" y="3" width="6" height="7" rx="2"/><rect x="14" y="15" width="6" height="7" rx="2"/><path d="M7 4v6c0 3 3 3 6 5"/>',
+ roadside:'<path d="M9 21v-7c0-3 4-4 4-7V3"/><path d="M19 3v18"/>',
+ lane:'<path d="M16 21v-5c0-3-8-4-8-7V3"/><path d="M5 6l3-3 3 3"/>',
+ left:'<path d="M15 21v-8a3 3 0 0 0-3-3H4"/><path d="M7 7l-3 3 3 3"/>'
+};
+let done={};try{done=JSON.parse(localStorage.getItem("g2c-done")||"{}")}catch(e){}
+function renderHome(){
+  const n=M.filter(m=>done[m.id]).length,nx=M.findIndex(m=>!done[m.id]),up=nx<0?0:nx;
+  $("pNum").textContent=n;$("pBar").style.width=(n/M.length*100)+"%";
+  $("pNote").textContent=n===M.length?"All five done. Run them again before test day.":`${M.length-n} left to practise before test day`;
+  $("upName").textContent=M[up].name;$("upSub").textContent=nx<0?"Practise it again":M[up].short;
+  $("upNext").onclick=()=>start(up);
+  $("mlist").innerHTML=M.map((m,i)=>`<button class="tile ${done[m.id]?"done":""}" id="m-${m.id}" data-i="${i}">
+    <span class="ic"><svg class="rough" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[m.id]}</svg></span>
+    <span><b>${m.name}</b><br><small>${done[m.id]?"done!":m.steps.length+" steps"}</small></span></button>`).join("")+
+    `<div class="tile info"><span class="ic"><svg class="rough" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></span><span><b>How to drive</b><br><small>Drag the wheel, pick P, R or D, and hold the pedal. Tap the wheel centre to straighten.</small></span></div>`;
+  document.querySelectorAll(".tile[data-i]").forEach(b=>b.onclick=()=>start(+b.dataset.i));
+}
+
+/* ---------- state ---------- */
+let G=null, cur=0, paused=true, pedal=false, wheelRot=0, last=0, lookFx=null, snap=null, toastT=0;
+function centerOf(c){return [c.x+18*Math.cos(c.h),c.y+18*Math.sin(c.h)]}
+function carPoly(cx,cy,h,hl=HL-1,hw=HW-.5){const dx=Math.cos(h),dy=Math.sin(h),px=-dy,py=dx;
+  return [[cx+dx*hl+px*hw,cy+dy*hl+py*hw],[cx+dx*hl-px*hw,cy+dy*hl-py*hw],[cx-dx*hl-px*hw,cy-dy*hl-py*hw],[cx-dx*hl+px*hw,cy-dy*hl+py*hw]]}
+function hit(a,b){for(const P of [a,b])for(let i=0;i<P.length;i++){const p=P[i],q=P[(i+1)%P.length],nx=q[1]-p[1],ny=p[0]-q[0];
+  let a1=1e9,a2=-1e9,b1=1e9,b2=-1e9;for(const v of a){const d=v[0]*nx+v[1]*ny;a1=Math.min(a1,d);a2=Math.max(a2,d)}
+  for(const v of b){const d=v[0]*nx+v[1]*ny;b1=Math.min(b1,d);b2=Math.max(b2,d)}if(a2<b1||b2<a1)return false}return true}
+
+function derive(){
+  const c=G.car,[cx,cy]=centerOf(c),poly=carPoly(cx,cy,c.h,HL,HW);
+  G.cx=cx;G.cy=cy;G.hd=((c.h*R2D)%360+360)%360;G.steer=c.steer;
+  G.minX=Math.min(...poly.map(p=>p[0]));G.maxX=Math.max(...poly.map(p=>p[0]));
+  G.noseY=cy+HL*Math.sin(c.h);G.tailY=cy-HL*Math.sin(c.h);G.tailX=cx-HL*Math.cos(c.h);
+  G.stopped=Math.abs(c.v)<.6&&!pedal;
+  G.trav=Math.hypot(cx-G.ss[0],cy-G.ss[1]);
+}
+function start(i){
+  cur=i;const m=M[i],[sx,sy,sh]=m.start,h=sh*D2R;
+  G={car:{x:sx-18*Math.cos(h),y:sy-18*Math.sin(h),h,v:0,steer:0},gear:"D",sig:null,chk:{L:false,R:false},
+     step:0,ss:[sx,sy],traffic:(m.traffic||[]).map(t=>({cx:t[0],cy:t[1],h:t[2]*D2R,v:t[3]})),
+     blocks:m.scene==="cross"?crossBlocks(m.H):streetBlocks(m.H),
+     parked:(m.parked||[]).map(p=>carPoly(p[0],p[1],270*D2R)),t0:performance.now(),camY:sy-400};
+  wheelRot=0;pedal=false;$("pedal").classList.remove("down");
+  $("home").hidden=true;$("play").hidden=false;$("mname").textContent=m.name;
+  hideSheet();takeSnap();syncUI(true);paused=false;resize();
+}
+function takeSnap(){snap=JSON.stringify({car:G.car,gear:G.gear,sig:G.sig,traffic:G.traffic,wheelRot})}
+function retry(){const s=JSON.parse(snap);Object.assign(G,{car:s.car,gear:s.gear,sig:s.sig,traffic:s.traffic,chk:{L:false,R:false}});
+  wheelRot=s.wheelRot;G.car.v=0;const [cx,cy]=centerOf(G.car);G.ss=[cx,cy];hideSheet();syncUI(true);paused=false}
+
+/* ---------- UI sync ---------- */
+let lastChips="";
+function syncUI(force){
+  const m=M[cur],st=m.steps[G.step];
+  if(force){
+    $("dots").innerHTML=m.steps.map((_,i)=>`<i class="${i<G.step?"on":""}"></i>`).join("");
+    $("slbl").textContent=`STEP ${G.step+1} OF ${m.steps.length}`;
+    $("stitle").textContent=st.t;$("tip").textContent=st.tip;
+  }
+  derive();
+  const html=st.c.map(c=>`<span class="chip ${c.ok(G)?"ok":""}"><i></i>${c.l}</span>`).join("");
+  if(force||html!==lastChips){$("chips").innerHTML=html;lastChips=html}
+  for(const g of "PRD")$("g"+g).setAttribute("aria-pressed",G.gear===g);
+  $("sigL").classList.toggle("on",G.sig==="L");$("sigR").classList.toggle("on",G.sig==="R");
+  $("lookL").classList.toggle("on",G.chk.L);$("lookR").classList.toggle("on",G.chk.R);
+  $("wheelG").setAttribute("transform",`rotate(${wheelRot} 60 60)`);
+  const f=wheelRot/540,a=Math.abs(f);
+  $("wheelLbl").textContent=a<.08?"Straight":a>.92?(f<0?"Full left":"Full right"):(f<0?"Left":"Right");
+}
+function toast(t){$("toast").textContent=t;$("toast").hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>$("toast").hidden=true,1800)}
+function sheet(t,msg,btns){$("shT").textContent=t;$("shM").textContent=msg;$("shB").innerHTML="";$("sheet").dataset.kind=t==="Maneuver complete"?"ok":"fail";document.querySelector(".controls").classList.add("locked");
+  btns.forEach(([l,fn,pri])=>{const b=document.createElement("button");b.className="btn"+(pri?" pri":"");b.textContent=l;b.onclick=fn;$("shB").appendChild(b)});
+  $("sheet").hidden=false;paused=true;pedal=false;$("pedal").classList.remove("down")}
+function hideSheet(){$("sheet").hidden=true;document.querySelector(".controls").classList.remove("locked")}
+function fail(msg){if(paused)return;G.car.v=0;sheet("Try that again",msg,[["Retry",retry,true],["Restart",()=>start(cur)]])}
+function advance(){
+  const m=M[cur],st=m.steps[G.step];st.done&&st.done(G);
+  if(G.step>=m.steps.length-1){
+    done[m.id]=1;try{localStorage.setItem("g2c-done",JSON.stringify(done))}catch(e){}
+    const sec=Math.round((performance.now()-G.t0)/1000);
+    $("dots").innerHTML=m.steps.map(()=>`<i class="on"></i>`).join("");
+    const nx=(cur+1)%M.length;
+    sheet("Maneuver complete",`Done in ${sec}s. Nice driving.`,
+      [["Next",()=>start(nx),true],["Again",()=>start(cur)],["Menu",goHome]]);
+    return;
+  }
+  G.step++;G.chk={L:false,R:false};derive();G.ss=[G.cx,G.cy];takeSnap();syncUI(true);
+  const c=$("coach");c.classList.add("flash");setTimeout(()=>c.classList.remove("flash"),350);toast("✓ Nice! "+st.t);
+}
+function goHome(){paused=true;$("play").hidden=true;$("home").hidden=false;renderHome()}
+
+/* ---------- controls ---------- */
+$("back").onclick=goHome;$("restart").onclick=()=>start(cur);
+const tapSig=s=>{G.sig=G.sig===s?null:s;syncUI()};
+$("sigL").onclick=()=>tapSig("L");$("sigR").onclick=()=>tapSig("R");
+const look=s=>{G.chk[s]=true;lookFx={s,t:performance.now()};syncUI()};
+$("lookL").onclick=()=>look("L");$("lookR").onclick=()=>look("R");
+const setGear=g=>{if(!G)return;if(Math.abs(G.car.v)>1){toast("Stop the car before changing gear");return}G.gear=g;syncUI()};
+for(const g of "PRD")$("g"+g).onclick=()=>setGear(g);
+const pd=$("pedal");
+pd.addEventListener("pointerdown",e=>{e.preventDefault();pd.setPointerCapture(e.pointerId);pedal=true;pd.classList.add("down");
+  if(G&&G.gear==="P")toast("Shift to D or R to move")});
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>pd.addEventListener(ev,()=>{pedal=false;pd.classList.remove("down")}));
+pd.addEventListener("contextmenu",e=>e.preventDefault());
+const wh=$("wheel");let wDrag=null;
+const angAt=e=>{const r=wh.getBoundingClientRect();return Math.atan2(e.clientY-(r.top+r.height/2),e.clientX-(r.left+r.width/2))};
+wh.addEventListener("pointerdown",e=>{e.preventDefault();wh.setPointerCapture(e.pointerId);const r=wh.getBoundingClientRect();
+  wDrag={a:angAt(e),moved:0,hub:Math.hypot(e.clientX-(r.left+r.width/2),e.clientY-(r.top+r.height/2))<r.width*.17}});
+wh.addEventListener("pointermove",e=>{if(!wDrag)return;const a=angAt(e);let d=(a-wDrag.a)*R2D;if(d>180)d-=360;if(d<-180)d+=360;
+  wDrag.a=a;wDrag.moved+=Math.abs(d);wheelRot=Math.max(-540,Math.min(540,wheelRot+d));syncUI()});
+const wEnd=()=>{if(wDrag&&wDrag.hub&&wDrag.moved<6){wheelRot=0;syncUI()}wDrag=null};
+wh.addEventListener("pointerup",wEnd);wh.addEventListener("pointercancel",()=>wDrag=null);
+const keys={};
+addEventListener("keydown",e=>{if($("play").hidden)return;keys[e.key]=1;if(e.key==="ArrowUp"||e.key===" "){pedal=true;pd.classList.add("down");e.preventDefault()}
+  const k=e.key.toUpperCase();if("PRD".includes(k)&&k.length===1)setGear(k)});
+addEventListener("keyup",e=>{keys[e.key]=0;if(e.key==="ArrowUp"||e.key===" "){pedal=false;pd.classList.remove("down")}});
+
+/* ---------- canvas ---------- */
+const cv=$("cv"),ctx=cv.getContext("2d");let cw=300,ch=400,dpr=1,K=1;
+function resize(){const r=$("stage").getBoundingClientRect();if(!r.width)return;dpr=Math.min(3,devicePixelRatio||1);cw=r.width;ch=r.height;
+  cv.width=cw*dpr;cv.height=ch*dpr;K=cw/VW}
+new ResizeObserver(resize).observe($("stage"));
+let col={ink:"#1b1b1b",pencil:"#8a8a8a",hatch:"#d4d4d4",paper:"#ffffff",yel:"#f2851a",blue:"#2c85d8"};
+const pats={};
+function crayon(hex){if(pats[hex])return pats[hex];const o=document.createElement("canvas");o.width=o.height=96;const c=o.getContext("2d");c.lineCap="round";let k=7;
+  for(let i=0;i<1400;i++){const x=rnd(k++)*130-17,y=rnd(k++)*130-17,l=5+rnd(k++)*16;c.strokeStyle=hex;c.globalAlpha=.18+rnd(k++)*.55;c.lineWidth=.8+rnd(k++)*1.8;
+    c.beginPath();c.moveTo(x,y);c.lineTo(x+l*.9,y-l*.42);c.stroke()}
+  c.globalCompositeOperation="destination-out";for(let i=0;i<260;i++){c.globalAlpha=.6;c.fillStyle="#000";c.fillRect(rnd(k++)*96,rnd(k++)*96,1+rnd(k++)*1.5,1)}
+  return pats[hex]=ctx.createPattern(o,"repeat")}
+function wash(P,c,seed){ctx.save();ctx.fillStyle=crayon(c);ctx.translate(1.2,.9);poly(P);ctx.fill();ctx.restore()}
+function readCols(){}
+const rnd=s=>{const x=Math.sin(s*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function poly(P){ctx.beginPath();P.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath()}
+// sketchy pencil path: two wobbly passes along the points
+function sk(pts,closed,seed,amp=1.1,passes=2){amp*=.3;passes=1;
+  const P=closed?[...pts,pts[0]]:pts;ctx.beginPath();
+  for(let pass=0;pass<passes;pass++){let k=seed*13+pass*101;
+    for(let i=0;i<P.length-1;i++){const [x1,y1]=P[i],[x2,y2]=P[i+1],n=Math.max(1,Math.round(Math.hypot(x2-x1,y2-y1)/12));
+      for(let j=(i?1:0);j<=n;j++){const t=j/n,x=x1+(x2-x1)*t+(rnd(k++)-.5)*amp*2,y=y1+(y2-y1)*t+(rnd(k++)-.5)*amp*2;
+        (i===0&&j===0)?ctx.moveTo(x,y):ctx.lineTo(x,y)}}}
+  ctx.stroke();
+}
+function skc(cx,cy,r,seed,amp=.25){const pts=[];const n=Math.max(8,Math.round(r*1.2));for(let i=0;i<n;i++){const a=i/n*Math.PI*2+seed;const rr2=r+(rnd(seed*7+i)-.5)*amp*2;pts.push([cx+Math.cos(a)*rr2,cy+Math.sin(a)*rr2])}
+  return pts}
+function circ(cx,cy,r,seed,fill){const P=skc(cx,cy,r,seed);if(fill){poly(P);ctx.fillStyle=fill;ctx.fill()}sk(P,true,seed,.6)}
+function hatchRect(x1,y1,x2,y2,gap=9){ctx.save();ctx.beginPath();ctx.rect(x1,y1,x2-x1,y2-y1);ctx.clip();ctx.strokeStyle=col.hatch;ctx.lineWidth=1.3;ctx.beginPath();
+  const s=Math.floor((x1+y1)/gap)*gap;for(let d=s;d<x2+y2+gap;d+=gap){ctx.moveTo(d-y1,y1);ctx.lineTo(d-y2,y2)}ctx.stroke();ctx.restore()}
+// doodle car, local +x is the FRONT
+function drawCar(cx,cy,h,steer,mine,o={}){
+  ctx.save();ctx.translate(cx,cy);ctx.rotate(h);
+  const sd=mine?3:(o.seed||7);ctx.lineCap="round";ctx.lineJoin="round";ctx.strokeStyle=col.ink;
+  // wheels
+  ctx.lineWidth=2;
+  for(const s of [-1,1]){
+    const rw=[[-26,s*14-3.5],[-12,s*14-3.5],[-12,s*14+3.5],[-26,s*14+3.5]];poly(rw);ctx.fillStyle=col.ink;ctx.fill();
+    ctx.save();ctx.translate(18,s*14);ctx.rotate(steer||0);poly([[-7,-3.5],[7,-3.5],[7,3.5],[-7,3.5]]);ctx.fill();ctx.restore()}
+  // body: boxy with a rounded nose
+  const body=[[-30,-13],[20,-14],[27,-12],[31,-7],[31,7],[27,12],[20,14],[-30,13]];
+  poly(body);ctx.fillStyle=col.paper;ctx.fill();if(mine)wash(body,col.yel,sd);
+  if(!mine){ctx.save();poly(body);ctx.clip();hatchRect(-32,-16,32,16,5);ctx.restore()}
+  ctx.lineWidth=mine?2.6:2;sk(body,true,sd,.8);
+  // windshield (trapezoid toward the front) + rear window + roof
+  ctx.lineWidth=2;
+  const ws=[[4,-11],[13,-8],[13,8],[4,11]];poly(ws);ctx.fillStyle=mine?col.ink:col.paper;ctx.fill();sk(ws,true,sd+1,.5,1);
+  const rw=[[-22,-10],[-16,-10],[-16,10],[-22,10]];poly(rw);ctx.fillStyle=mine?col.ink:col.paper;ctx.fill();sk(rw,true,sd+2,.5,1);
+  sk([[-16,-11],[4,-11]],false,sd+3,.5,1);sk([[-16,11],[4,11]],false,sd+4,.5,1);
+  // hood line + big headlights = the front
+  sk([[13,-10],[22,-12]],false,sd+5,.4,1);sk([[13,10],[22,12]],false,sd+6,.4,1);
+  ctx.lineWidth=1.8;circ(26.5,-7.5,3.4,sd+8,col.paper);circ(26.5,7.5,3.4,sd+9,col.paper);
+  ctx.fillStyle=col.ink;ctx.beginPath();ctx.arc(27,-7.5,1.2,0,7);ctx.arc(27,7.5,1.2,0,7);ctx.fill();
+  if(mine){ctx.lineWidth=1.6;sk([[30,-2],[30,2]],false,sd+10,.3,1);
+    // little front arrow on the hood
+    ctx.lineWidth=2;sk([[15,-3.5],[19.5,0],[15,3.5]],false,sd+11,.3,1)}
+  // reverse: little "beep" lines behind
+  if(o.rev){ctx.lineWidth=1.8;for(const y of [-7,0,7])sk([[-34,y],[-41,y*1.4]],false,sd+20+y,.4,1)}
+  // signal: starburst on that side
+  if(o.sig&&o.blink){const y=o.sig==="L"?-1:1;ctx.lineWidth=1.8;
+    for(const x of [27,-27]){const by=y*15;for(let i=0;i<5;i++){const a=(i/4-.5)*1.6+(y>0?Math.PI/2:-Math.PI/2);
+      ctx.beginPath();ctx.moveTo(x+Math.cos(a)*3,by+Math.sin(a)*3);ctx.lineTo(x+Math.cos(a)*8,by+Math.sin(a)*8);ctx.stroke()}}}
+  ctx.restore();
+}
+function dash(x1,y1,x2,y2){ctx.save();ctx.strokeStyle=col.pencil;ctx.lineWidth=2.4;ctx.lineCap="round";
+  const L=Math.hypot(x2-x1,y2-y1),dx=(x2-x1)/L,dy=(y2-y1)/L;
+  const s0=Math.floor(((x1*dx+y1*dy))/30)*30;
+  for(let s=0;s<L+30;s+=30){const a=s-((x1*dx+y1*dy)-s0),b=a+16;if(b<0||a>L)continue;
+    const p=[x1+dx*Math.max(0,a),y1+dy*Math.max(0,a)],q=[x1+dx*Math.min(L,b),y1+dy*Math.min(L,b)];
+    sk([p,q],false,Math.round(p[0]+p[1]),.7,1)}
+  ctx.restore()}
+function vline(x,ya,yb,seed){const pts=[];for(let y=Math.floor(ya/30)*30;y<=yb+30;y+=30)pts.push([x,Math.max(ya,Math.min(yb,y))]);sk(pts,false,seed+Math.floor(ya/30),1,2)}
+function hline(y,xa,xb,seed){sk([[xa,y],[(xa+xb)/2,y],[xb,y]],false,seed,1,2)}
+function tree(x,y){ctx.lineWidth=2;ctx.strokeStyle=col.ink;
+  const P=[];for(let i=0;i<9;i++){const a=i/9*Math.PI*2;const r=12+(i%2?4:0);P.push([x+Math.cos(a)*r,y+Math.sin(a)*r])}
+  poly(P);ctx.fillStyle=col.paper;ctx.fill();
+  ctx.beginPath();for(let i=0;i<9;i++){const a=i/9*Math.PI*2,b=(i+1)/9*Math.PI*2;ctx.moveTo(x+Math.cos(a)*12,y+Math.sin(a)*12);
+    ctx.quadraticCurveTo(x+Math.cos((a+b)/2)*19,y+Math.sin((a+b)/2)*19,x+Math.cos(b)*12,y+Math.sin(b)*12)}ctx.stroke();
+  ctx.beginPath();ctx.arc(x,y,2.4,0,7);ctx.fillStyle=col.ink;ctx.fill()}
+function drawScene(m,y0,y1){
+  ctx.fillStyle=col.paper;ctx.fillRect(VX0-10,y0-10,VW+20,y1-y0+20);
+  ctx.lineCap="round";ctx.lineJoin="round";
+  for(const b of G.blocks){const x1=b[0][0],x2=b[1][0],ya=Math.max(b[0][1],y0-30),yb=Math.min(b[2][1],y1+30);if(ya>=yb)continue;
+    hatchRect(Math.max(x1,VX0-10),ya,Math.min(x2,VX0+VW+10),yb,11)}
+  ctx.strokeStyle=col.ink;ctx.lineWidth=2.6;
+  for(const b of G.blocks){const x1=b[0][0],x2=b[1][0],ya=b[0][1],yb=b[2][1];
+    const ex=x2<200?x2:x1;vline(ex,Math.max(ya,y0-30),Math.min(yb,y1+30),Math.round(ex));
+    if(ya>-300&&ya>y0-30&&ya<y1+30)hline(ya,Math.max(x1,VX0-10),Math.min(x2,VX0+VW+10),Math.round(ya+x1));
+    if(yb<m.H+300&&yb>y0-30&&yb<y1+30)hline(yb,Math.max(x1,VX0-10),Math.min(x2,VX0+VW+10),Math.round(yb+x1));
+    const tx=x2<200?x2-42:x1+42;
+    for(let y=Math.floor(y0/110)*110+40;y<y1+60;y+=110){if(y<ya+30||y>yb-30)continue;tree(tx,y)}}
+  if(m.scene==="street"||m.scene==="lanes"){dash(180,y0-20,180,y1+20);
+    if(m.scene==="lanes"){ctx.fillStyle=col.pencil;ctx.font="700 13px Gaegu, cursive";ctx.textAlign="center";
+      for(let y=Math.floor(y0/400)*400+200;y<y1+40;y+=400){ctx.fillText("one way ↑",152,y);ctx.fillText("one way ↑",207,y)}}}
+  if(m.scene==="cross"){
+    dash(180,y0-20,180,400);dash(180,510,180,y1+20);dash(VX0-10,455,125,455);dash(235,455,VX0+VW+10,455);
+    ctx.strokeStyle=col.ink;ctx.lineWidth=4;sk([[182,530],[233,530]],false,5,.8,2);
+    ctx.lineWidth=1.8;
+    for(let i=0;i<5;i++){sk([[130+i*21,514],[141+i*21,514],[141+i*21,524],[130+i*21,524]],true,i+30,.5,1);sk([[130+i*21,386],[141+i*21,386],[141+i*21,396],[130+i*21,396]],true,i+40,.5,1);
+      sk([[237,405+i*21],[247,405+i*21],[247,416+i*21],[237,416+i*21]],true,i+50,.5,1);sk([[113,405+i*21],[123,405+i*21],[123,416+i*21],[113,416+i*21]],true,i+60,.5,1)}
+    ctx.save();ctx.translate(254,548);ctx.lineWidth=2.2;const box=[[-9,-28],[9,-28],[9,14],[-9,14]];poly(box);ctx.fillStyle=col.paper;ctx.fill();sk(box,true,70,.6);
+    circ(0,-18,4.5,71,col.paper);circ(0,-6,4.5,72,col.paper);circ(0,6,4.5,73,col.ink);
+    ctx.fillStyle=col.ink;ctx.font="700 14px Gaegu, cursive";ctx.textAlign="left";ctx.fillText("go!",12,10);ctx.restore();
+  }
+}
+function frame(now){
+  requestAnimationFrame(frame);
+  if(!G||$("play").hidden)return;
+  const dt=Math.min(.033,(now-(last||now))/1000);last=now;
+  
+  const m=M[cur],c=G.car;
+  if(!paused){
+    if(keys.ArrowLeft)wheelRot=Math.max(-540,wheelRot-600*dt);
+    if(keys.ArrowRight)wheelRot=Math.min(540,wheelRot+600*dt);
+    if(keys.ArrowLeft||keys.ArrowRight)syncUI();
+    c.steer=wheelRot/540*MAXS;
+    const target=pedal&&G.gear!=="P"?(G.gear==="D"?62:-34):0;
+    const acc=Math.abs(target)>Math.abs(c.v)&&Math.sign(target||1)===Math.sign(c.v||target)?130:420;
+    c.v+=Math.max(-acc*dt,Math.min(acc*dt,target-c.v));
+    c.x+=c.v*Math.cos(c.h)*dt;c.y+=c.v*Math.sin(c.h)*dt;c.h+=c.v/WB*Math.tan(c.steer)*dt;
+    for(const t of G.traffic){t.cx+=t.v*Math.cos(t.h)*dt;t.cy+=t.v*Math.sin(t.h)*dt}
+    derive();
+    const P=carPoly(G.cx,G.cy,c.h);
+    if(G.blocks.some(b=>hit(P,b)))fail("You touched the curb. Go slower and stop a little earlier.");
+    else if(G.parked.some(b=>hit(P,b)))fail("You bumped a parked car. Watch your corners as you swing in.");
+    else if(G.traffic.some(t=>hit(P,carPoly(t.cx,t.cy,t.h))))fail("You hit another car. Check your mirror and blind spot, and wait for a gap.");
+    else if(G.cy<40)fail("You ran out of road. Try the step again.");
+    else{const st=m.steps[G.step],gm=st.guard&&st.guard(G);
+      if(gm)fail(gm);else{syncUI();if(st.c.every(x=>x.ok(G)))advance()}}
+  }
+  // camera
+  const VH=ch/K;let target=G.cy-VH*.6;target=Math.max(0,Math.min(m.H-VH,target));
+  G.camY+=(target-G.camY)*Math.min(1,dt*5);
+  ctx.setTransform(dpr*K,0,0,dpr*K,-VX0*dpr*K,-G.camY*dpr*K);
+  drawScene(m,G.camY,G.camY+VH);
+  const st=m.steps[G.step];
+  if(st&&st.ghost){const [gx,gy,gh]=st.ghost;ctx.save();ctx.translate(gx,gy);ctx.rotate(gh*D2R);wash([[-HL,-HW],[HL,-HW],[HL,HW],[-HL,HW]],col.blue,9);ctx.setLineDash([4,6]);ctx.lineWidth=2;
+    ctx.strokeStyle=col.ink;rr(-HL,-HW,HL*2,HW*2,8);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=col.ink;ctx.font="700 12px Gaegu, cursive";ctx.textAlign="center";ctx.rotate(-gh*D2R);ctx.fillText("here!",0,4);ctx.restore()}
+  (m.parked||[]).forEach((p,i)=>drawCar(p[0],p[1],270*D2R,0,false,{seed:11+i*5}));
+  for(const t of G.traffic)drawCar(t.cx,t.cy,t.h,0,false);
+  if(lookFx){const k=(now-lookFx.t)/900;if(k>1)lookFx=null;else{
+    const a=c.h+(lookFx.s==="L"?-1:1)*135*D2R,ox=G.cx,oy=G.cy;ctx.save();ctx.globalAlpha=1-k;ctx.beginPath();ctx.moveTo(ox,oy);ctx.arc(ox,oy,120,a-.45,a+.45);ctx.closePath();ctx.clip();ctx.fillStyle=crayon(col.blue);ctx.globalAlpha=.7*(1-k);ctx.fillRect(ox-130,oy-130,260,260);ctx.globalAlpha=1-k;
+    ctx.strokeStyle=col.pencil;ctx.lineWidth=1.4;ctx.beginPath();for(let d=-140;d<140;d+=7){ctx.moveTo(ox+d-130,oy-130);ctx.lineTo(ox+d+130,oy+130)}ctx.stroke();ctx.restore()}}
+  drawCar(G.cx,G.cy,c.h,c.steer,true,{sig:G.sig,blink:(now/350|0)%2===0,rev:G.gear==="R"});
+}
+requestAnimationFrame(frame);
+renderHome();readCols();
+})();
+</script>
+</body>
+</html>
