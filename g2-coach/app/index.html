@@ -3,9 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>G2 Maneuver Coach</title>
+<title>G2 Coach</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Patrick+Hand&display=swap">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <style>
 /* Layout: phone-width app drawn like a kid's pencil doodle on graph paper. Single light look on purpose: ink on paper. */
 :root{
@@ -154,7 +160,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
       <svg class="arrow rough" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="26" cy="26" r="22"/><path d="M14 27 Q 26 25 37 26 M29 18 L38 26 L29 34"/></svg>
     </button>
     <div class="tiles" id="mlist"></div>
-    <p class="note">Based on common Ontario G2 practice. Check the official MTO Driver's Handbook too.</p>
+    <p class="note">Unofficial practice tool, not affiliated with the MTO or DriveTest. Based on common Ontario G2 practice; check the official MTO Driver's Handbook too. <a href="https://junzhaodesign.com/g2-coach/privacy.html" target="_blank" rel="noopener" style="color:inherit">Privacy policy</a></p>
   </section>
 
   <section class="view" id="play" hidden>
@@ -561,5 +567,6 @@ requestAnimationFrame(frame);
 renderHome();readCols();
 })();
 </script>
+<script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
 </body>
 </html>

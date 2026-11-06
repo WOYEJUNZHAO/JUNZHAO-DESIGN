@@ -1,0 +1,20 @@
+{
+  "id": "/g2-coach/app/",
+  "name": "G2 Coach: Driving Practice",
+  "short_name": "G2 Coach",
+  "description": "Practise Ontario G2 road-test maneuvers by driving them yourself, one step at a time.",
+  "start_url": "/g2-coach/app/",
+  "scope": "/g2-coach/app/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "lang": "en-CA",
+  "categories": ["education", "auto"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
