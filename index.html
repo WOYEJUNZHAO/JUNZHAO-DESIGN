@@ -526,6 +526,10 @@ window.IMGS={"01-970x600-trekking-poles_1.jpg": "data:image/jpeg;base64,/9j/4AAQ
   }
   function scan(){ document.querySelectorAll("video[data-sound]:not([data-ready])").forEach(function(v){ v.setAttribute("data-ready",""); unmute(v); }); }
   new MutationObserver(scan).observe(document.body,{childList:true,subtree:true}); scan();
+  /* pause while the tab is in the background or the window is minimised, resume on return */
+  document.addEventListener("visibilitychange",function(){
+    document.querySelectorAll("video[data-sound]").forEach(function(v){ if(document.hidden) v.pause(); else v.play().catch(function(){}); });
+  });
 })();
 </script>
 </body>
