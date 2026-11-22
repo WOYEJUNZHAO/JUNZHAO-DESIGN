@@ -390,7 +390,7 @@ window.IMGS={"01-970x600-trekking-poles_1.jpg": "data:image/jpeg;base64,/9j/4AAQ
   var home=document.getElementById("home"), caseEl=document.getElementById("case"), baseTitle=document.title, homeY=0;
   function para(x){return esc(x).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener" style="text-decoration:underline">$1</a>');}
   var ROLE={branding:"Brand Designer",website:"Website Designer",uiux:"UX Designer",graphic:"Graphic Designer"};
-  var LOCALVID={satellicaFlow:["satellica-flow","16/9"],qfwNahkV:["satellica","1200/320"],rxO8m2w3:["blanc","1920/1012"],dxTUMuQR:["b-plus-motion","16/9"],GFbLZHe1:["mod-text","16/9"]};
+  var LOCALVID={satellicaFlow:["satellica-flow","16/9","sound"],qfwNahkV:["satellica","1200/320"],rxO8m2w3:["blanc","1920/1012"],dxTUMuQR:["b-plus-motion","16/9"],GFbLZHe1:["mod-text","16/9"]};
   function renderCase(i){
     var c=CASES[i], p=P[i], m=c.meta||{}, b=c.blocks.slice(), out="";
     if(b.length&&b[0].t==="h"&&b[0].x.toLowerCase().indexOf(c.title.toLowerCase().split(" ")[0])>-1) b.shift();
@@ -418,7 +418,8 @@ window.IMGS={"01-970x600-trekking-poles_1.jpg": "data:image/jpeg;base64,/9j/4AAQ
         body+='<figure class="c-fig'+(tall?' tall':'')+'"><img src="'+x.file+'" width="'+x.w+'" height="'+x.h+'" alt="'+esc(c.title)+'" loading="lazy" decoding="async"></figure>'; }
       else if(x.t==="video"){ flush();
         var lv=LOCALVID[x.id];
-        if(lv) body+='<figure class="c-vid local" style="aspect-ratio:'+lv[1]+'"><video src="video/'+lv[0]+'.mp4" poster="video/'+lv[0]+'.jpg" autoplay muted loop playsinline controls preload="metadata"></video></figure>';
+        if(lv&&lv[2]==="sound") body+='<figure class="c-vid local" style="aspect-ratio:'+lv[1]+'"><video data-sound src="video/'+lv[0]+'.mp4" poster="video/'+lv[0]+'.jpg" autoplay muted loop playsinline preload="auto" disablepictureinpicture></video></figure>';
+        else if(lv) body+='<figure class="c-vid local" style="aspect-ratio:'+lv[1]+'"><video src="video/'+lv[0]+'.mp4" poster="video/'+lv[0]+'.jpg" autoplay muted loop playsinline controls preload="metadata"></video></figure>';
         else if(window.EMBED_VIDEO) body+='<figure class="c-vid"><iframe src="https://videopress.com/embed/'+x.id+'?hd=1&cover=1&loop=0&muted=0&playsinline=1" title="'+esc(c.title)+' video" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></figure>';
         else body+='<a class="c-video" href="https://videopress.com/v/'+x.id+'" target="_blank" rel="noopener"><span>Watch the video<small>Opens in a new tab · plays inline on the published site</small></span><span class="play">▶</span></a>'; }
     });
@@ -511,6 +512,20 @@ window.IMGS={"01-970x600-trekking-poles_1.jpg": "data:image/jpeg;base64,/9j/4AAQ
       var b=e.target.closest(".band"); cur.classList.toggle("inv",!!(b&&b.classList.contains("dark")));
     });
   }
+})();
+</script>
+<script>
+/* Videos marked data-sound play with sound and no controls. Browsers only allow sound after the
+   visitor has interacted with the site, so if that is not yet the case the video starts muted and
+   turns its sound on at the visitor's first click, tap or key press. */
+(function(){
+  function unmute(v){ v.muted=false; var p=v.play(); if(p&&p.catch) p.catch(function(){ v.muted=true; v.play(); wait(v); }); }
+  function wait(v){
+    function go(){ ["pointerdown","keydown","touchend"].forEach(function(e){document.removeEventListener(e,go,true);}); if(document.contains(v)) unmute(v); }
+    ["pointerdown","keydown","touchend"].forEach(function(e){document.addEventListener(e,go,true);});
+  }
+  function scan(){ document.querySelectorAll("video[data-sound]:not([data-ready])").forEach(function(v){ v.setAttribute("data-ready",""); unmute(v); }); }
+  new MutationObserver(scan).observe(document.body,{childList:true,subtree:true}); scan();
 })();
 </script>
 </body>
