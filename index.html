@@ -390,7 +390,7 @@ window.IMGS={"01-970x600-trekking-poles_1.jpg": "data:image/jpeg;base64,/9j/4AAQ
   var home=document.getElementById("home"), caseEl=document.getElementById("case"), baseTitle=document.title, homeY=0;
   function para(x){return esc(x).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener" style="text-decoration:underline">$1</a>');}
   var ROLE={branding:"Brand Designer",website:"Website Designer",uiux:"UX Designer",graphic:"Graphic Designer"};
-  var LOCALVID={satellicaFlow:["satellica-flow","16/9","sound"],satellicaCarousel:["satellica-carousel","16/9","loop"],qfwNahkV:["satellica","1200/320"],rxO8m2w3:["blanc","1920/1012"],dxTUMuQR:["b-plus-motion","16/9"],GFbLZHe1:["mod-text","16/9"]};
+  var LOCALVID={satellicaFlow:["satellica-flow","16/9","sound"],satellicaCarousel:["satellica-carousel-photo","16/9","loop"],qfwNahkV:["satellica","1200/320"],rxO8m2w3:["blanc","1920/1012"],dxTUMuQR:["b-plus-motion","16/9"],GFbLZHe1:["mod-text","16/9"]};
   function renderCase(i){
     var c=CASES[i], p=P[i], m=c.meta||{}, b=c.blocks.slice(), out="";
     if(b.length&&b[0].t==="h"&&b[0].x.toLowerCase().indexOf(c.title.toLowerCase().split(" ")[0])>-1) b.shift();
